@@ -21,15 +21,22 @@ public class WordUtils {
 		最少词数算法：MinimalWordCount
 		最大Ngram分值算法：MaxNgramScore
 	 */
-	public void segmenter() {
-		
-	}
-
-	public static void main(String[] args) {
-		List<Word> words = WordSegmenter.seg("应用级产品开发平台", SegmentationAlgorithm.MaximumMatching);
+	public static void segmenter(String input, SegmentationAlgorithm segmentationAlgorithm) {
+		List<Word> words = WordSegmenter.seg(input, segmentationAlgorithm);
 		for (Word word : words) {
 			System.out.println(word);
 		}
+		System.out.println("###########");
+	}
+
+	public static void main(String[] args) {
+		segmenter("湖北省武汉市武昌区珞珈山路16号武汉大学", SegmentationAlgorithm.MaximumMatching);
+		segmenter("湖北省武汉市武昌区珞珈山路16号武汉大学", SegmentationAlgorithm.ReverseMaximumMatching);
+		segmenter("湖北省武汉市武昌区珞珈山路16号武汉大学", SegmentationAlgorithm.BidirectionalMaximumMatching);
+		segmenter("湖北省武汉市武昌区珞珈山路16号武汉大学", SegmentationAlgorithm.BidirectionalMaximumMinimumMatching);
+		segmenter("湖北省武汉市武昌区珞珈山路16号武汉大学", SegmentationAlgorithm.MinimalWordCount);
+		segmenter("湖北省武汉市武昌区珞珈山路16号武汉大学", SegmentationAlgorithm.MaxNgramScore);
+		segmenter("湖北省武汉市武昌区珞珈山路16号武汉大学", SegmentationAlgorithm.FullSegmentation);
 	}
 	
 }
