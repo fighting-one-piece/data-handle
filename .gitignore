@@ -12,4 +12,5 @@ lib
 *.dat
 *.class
 */org.eclipse.wst.common.component
+*/org.platform.modules.mapreduce.clean
 

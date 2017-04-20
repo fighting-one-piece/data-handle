@@ -3,7 +3,7 @@ package org.platform.modules.mapreduce.base;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.util.Tool;
-import org.platform.utils.JobUtils;
+import org.platform.utils.monitor.JobUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -28,6 +28,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<hadoop.version>2.7.2</hadoop.version>
 		<hive.version>2.1.0</hive.version>
+		<spark.version>2.1.0</spark.version>
+		<kafka.version>0.10.0.0</kafka.version>
 		<eshadoop.version>2.4.1</eshadoop.version>
 		<elasticsearch.version>2.4.1</elasticsearch.version>
 		<jedis.version>2.5.1</jedis.version>
@@ -184,6 +186,58 @@
 		    <version>${hive.version}</version>
 		</dependency>
 		
+		<!-- Spark依赖包 -->
+		<!--  
+		<dependency>
+		    <groupId>org.apache.spark</groupId>
+		    <artifactId>spark-core_2.11</artifactId>
+		    <version>${spark.version}</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.apache.spark</groupId>
+		    <artifactId>spark-sql_2.11</artifactId>
+		    <version>${spark.version}</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.apache.spark</groupId>
+		    <artifactId>spark-hive_2.11</artifactId>
+		    <version>${spark.version}</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.apache.spark</groupId>
+		    <artifactId>spark-mllib_2.11</artifactId>
+		    <version>${spark.version}</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.apache.spark</groupId>
+		    <artifactId>spark-graphx_2.11</artifactId>
+		    <version>${spark.version}</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.apache.spark</groupId>
+		    <artifactId>spark-streaming_2.11</artifactId>
+		    <version>${spark.version}</version>
+		</dependency>
+		-->
+		
+		<!-- Kafka依赖包 -->
+		<dependency>
+		    <groupId>org.apache.kafka</groupId>
+		    <artifactId>kafka_2.11</artifactId>
+		    <version>${kafka.version}</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.apache.kafka</groupId>
+		    <artifactId>kafka-clients</artifactId>
+		    <version>${kafka.version}</version>
+		</dependency>
+		
 		<!-- JSoup依赖包 -->
 		<dependency>
 		    <groupId>org.jsoup</groupId>
@@ -199,11 +253,13 @@
 		</dependency>
 		
 		<!-- Word分词器依赖包 -->
+		<!--  
 	    <dependency>
 	        <groupId>org.apdplat</groupId>
 	        <artifactId>word</artifactId>
 	        <version>1.3</version>
 	    </dependency>
+		-->
 		
 		<!-- Redis客户端库 -->
 	    <dependency>

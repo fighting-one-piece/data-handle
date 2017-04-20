@@ -10,9 +10,9 @@ import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
-import org.platform.utils.DateFormatter;
-import org.platform.utils.IDGenerator;
-import org.platform.utils.ValidateUtils;
+import org.platform.utils.date.DateFormatter;
+import org.platform.utils.idgen.IDGenerator;
+import org.platform.utils.judge.ValidateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

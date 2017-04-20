@@ -13,24 +13,45 @@ public class AdministrativeDivision extends PKAutoEntity<Long> {
 
 	private static final long serialVersionUID = 1L;
 	
-	/** 省、自治区、直辖市、特别行政区*/
-	@Column(name="PROVINCE")
-	private String province = null;
-	/** 市、自治州、区*/
-	@Column(name="CITY")
-	private String city = null;
-	/** 县*/
-	@Column(name="COUNTY")
-	private String county = null;
-	/** 街道办事处、镇、乡*/
-	@Column(name="VILLAGES_TOWNS")
-	private String villagesTowns = null;
-	/** 居民委员会、村民委员会*/
-	@Column(name="RESIDENTS_COMMITTEE")
-	private String residentsCommittee = null;
+	public static final String ROOT = "000000000000";
+	
+	/** 区域*/
+	@Column(name="REGION")
+	private String region = null;
 	/** 编码*/
 	@Column(name="CODE")
 	private String code = null;
+	/** 上级区域编码*/
+	@Column(name = "PARENT_CODE")
+	private String parentCode = null;
 	
+	public String getRegion() {
+		return region;
+	}
+	
+	public void setRegion(String region) {
+		this.region = region;
+	}
+	
+	public String getCode() {
+		return code;
+	}
+	
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getParentCode() {
+		return parentCode;
+	}
+
+	public void setParentCode(String parentCode) {
+		this.parentCode = parentCode;
+	}
+	
+	@Override
+	public String toString() {
+		return this.region + ":" + this.code + ":" + this.parentCode;
+	}
 	
 }

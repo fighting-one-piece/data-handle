@@ -3,7 +3,6 @@ package org.cisiondata.modules.address.utils;
 import java.util.List;
 
 import org.apdplat.word.WordSegmenter;
-import org.apdplat.word.dictionary.DictionaryFactory;
 import org.apdplat.word.segmentation.SegmentationAlgorithm;
 import org.apdplat.word.segmentation.Word;
 import org.apdplat.word.util.WordConfTools;
@@ -26,8 +25,9 @@ public class WordUtils {
 	public static void segmenter(String input, SegmentationAlgorithm segmentationAlgorithm) {
 		List<Word> words = WordSegmenter.seg(input, segmentationAlgorithm);
 		for (Word word : words) {
-			System.out.println(word);
+			System.out.print(word + "  ");
 		}
+		System.out.println();
 		System.out.println("###########");
 	}
 
@@ -40,8 +40,11 @@ public class WordUtils {
 //		segmenter("湖北省武汉市武昌区珞珈山路16号武汉大学", SegmentationAlgorithm.MaxNgramScore);
 //		segmenter("湖北省武汉市武昌区珞珈山路16号武汉大学", SegmentationAlgorithm.FullSegmentation);
 		WordConfTools.set("dic.path", "classpath:word/customdic.txt");
-//		DictionaryFactory.reload();
 		segmenter("湖北省武汉市武昌区珞珈山路16号武汉大学", SegmentationAlgorithm.MaximumMatching);
+		segmenter("湖北省武汉武昌区珞珈山路16号武汉大学", SegmentationAlgorithm.MaximumMatching);
+		segmenter("湖北武汉市武昌区珞珈山路16号武汉大学", SegmentationAlgorithm.MaximumMatching);
+		segmenter("湖北武汉武昌区珞珈山路16号武汉大学", SegmentationAlgorithm.MaximumMatching);
+		
 	}
 	
 }
