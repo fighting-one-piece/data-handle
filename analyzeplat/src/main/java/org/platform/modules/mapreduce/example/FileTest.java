@@ -14,6 +14,8 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apdplat.word.WordSegmenter;
+import org.apdplat.word.recognition.PersonName;
 
 public class FileTest {
 
@@ -60,8 +62,20 @@ public class FileTest {
 		in.close();
 	}
 	
+	public static void v1() {
+		System.out.println(PersonName.recognize(WordSegmenter.seg("@李建鹏")));
+		System.out.println(PersonName.recognize(WordSegmenter.seg("*何泽杰")));
+		System.out.println(PersonName.recognize(WordSegmenter.seg("！宋康明")));
+		System.out.println(PersonName.recognize(WordSegmenter.seg("李*欣")));
+		System.out.println(PersonName.recognize(WordSegmenter.seg("鹏得龙")));
+		System.out.println(PersonName.recognize(WordSegmenter.seg("刘（宇）TB")));
+		System.out.println(PersonName.recognize(WordSegmenter.seg("谢[鑫]无耻")));
+		System.out.println(PersonName.recognize(WordSegmenter.seg("谭佳龙VS王仕恩")));
+		System.out.println(PersonName.recognize(WordSegmenter.seg("诸葛正我厉害")));
+	}
+	
 	public static void main(String[] args) throws Exception {
-		method3();
+		v1();
 	}
 	
 }

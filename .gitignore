@@ -8,6 +8,8 @@ classes
 WEB-INF/classes/
 bin
 lib
+log
+*.log
 *.bat
 *.dat
 *.class
