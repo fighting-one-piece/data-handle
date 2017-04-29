@@ -16,7 +16,7 @@ import org.cisiondata.utils.titan.TitanUtils;
 
 import com.thinkaurelius.titan.core.TitanGraph;
 
-public class QQRelationUtils {
+public class QQGraphUtils {
 	
 	public void buildSchema(TitanGraph graph) {
 		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "uniqueid", String.class);
@@ -122,7 +122,7 @@ public class QQRelationUtils {
 	
 	public static void main(String[] args) throws ParseException {
 		TitanGraph graph = TitanUtils.getInstance().getGraph();
-		QQRelationUtils qqRelationGraph = new QQRelationUtils();
+		QQGraphUtils qqRelationGraph = new QQGraphUtils();
 		qqRelationGraph.buildSchema(graph);
 //		qqRelationGraph.loadNode(graph);
 //		qqRelationGraph.queryNode(graph

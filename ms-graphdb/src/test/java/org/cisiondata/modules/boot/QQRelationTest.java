@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.commons.io.FileUtils;
-import org.cisiondata.modules.qqrelation.service.IQQRelationService;
-import org.cisiondata.modules.qqrelation.service.impl.QQRelationServiceImpl;
+import org.cisiondata.modules.qqrelation.service.IQQGraphService;
+import org.cisiondata.modules.qqrelation.service.impl.QQGraphServiceImpl;
 import org.cisiondata.modules.qqrelation.utils.ESClient;
 import org.cisiondata.utils.date.DateFormatter;
 import org.cisiondata.utils.http.HttpUtils;
@@ -64,7 +64,7 @@ public class QQRelationTest {
 		map.put("ipAddress", "浙江省金华市电信");
 		map.put("_id", "f14d3c672cf40a52ff1748bbea98a3e5");
 		String nodeJSON = GsonUtils.fromMapToJson(map);
-		IQQRelationService qqRelationService = new QQRelationServiceImpl();
+		IQQGraphService qqRelationService = new QQGraphServiceImpl();
 		qqRelationService.insertQQNode(nodeJSON);
 	}
 	
@@ -85,7 +85,7 @@ public class QQRelationTest {
 	public static void t4() throws IOException {
 		List<String> lines = FileUtils.readLines(new File("F:\\document\\doc\\201704\\qqdata"));
 		for (String line : lines) {
-			IQQRelationService qqRelationService = new QQRelationServiceImpl();
+			IQQGraphService qqRelationService = new QQGraphServiceImpl();
 			qqRelationService.insertQQNode(line);
 		}
 	}

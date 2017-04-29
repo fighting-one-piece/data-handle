@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.cisiondata.utils.exception.BusinessException;
 
-public interface IQQRelationService {
+public interface IQQGraphService {
 	
 	/**
 	 * 插入QQ号

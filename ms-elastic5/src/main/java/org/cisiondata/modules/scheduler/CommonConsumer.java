@@ -1,11 +1,11 @@
-package org.cisiondata.modules.kafka;
+package org.cisiondata.modules.scheduler;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.cisiondata.modules.kafka.service.IConsumeService;
+import org.cisiondata.modules.scheduler.service.IConsumeService;
 
 import kafka.consumer.Consumer;
 import kafka.consumer.ConsumerConfig;

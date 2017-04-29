@@ -4,7 +4,7 @@ import javax.annotation.Resource;
 
 import org.cisiondata.modules.abstr.web.ResultCode;
 import org.cisiondata.modules.abstr.web.WebResult;
-import org.cisiondata.modules.qqrelation.service.IQQRelationService;
+import org.cisiondata.modules.qqrelation.service.IQQGraphService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,29 +14,26 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class QQRelationController {
+public class QQGraphController {
 	
-	private Logger LOG = LoggerFactory.getLogger(QQRelationController.class);
+	private Logger LOG = LoggerFactory.getLogger(QQGraphController.class);
 
-	@Resource(name = "qqRelationService")
-	private IQQRelationService qqRelationService = null;
-	
-	@ResponseBody
-	@RequestMapping(value = "/nodes", method = RequestMethod.GET)
-	public String insertNode(String nodeJSON) {
-		return "success";
-	}
+	@Resource(name = "qqGraphService")
+	private IQQGraphService qqGraphService = null;
 	
 	@ResponseBody
 	@RequestMapping(value = "/qqs", method = RequestMethod.POST)
-	public String insertQQNode(String nodeJSON) {
+	public WebResult insertQQNode(String nodeJSON) {
+		WebResult webResult = new WebResult();
 		try {
-			qqRelationService.insertQQNode(nodeJSON);
+			qqGraphService.insertQQNode(nodeJSON);
+			webResult.setResultCode(ResultCode.SUCCESS);
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
-			return e.getMessage();
+			webResult.setResultCode(ResultCode.FAILURE);
+			webResult.setFailure(e.getMessage());
 		}
-		return "success";
+		return webResult;
 	}
 	
 	@ResponseBody
@@ -44,7 +41,7 @@ public class QQRelationController {
 	public WebResult readQQNode(@PathVariable("qqNum") String qqNum) {
 		WebResult webResult = new WebResult();
 		try {
-			webResult.setData(qqRelationService.readQQNodeDataList(qqNum));
+			webResult.setData(qqGraphService.readQQNodeDataList(qqNum));
 			webResult.setResultCode(ResultCode.SUCCESS);
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
@@ -59,7 +56,7 @@ public class QQRelationController {
 	public WebResult readQQNodeByNickname(String nickname) {
 		WebResult webResult = new WebResult();
 		try {
-			webResult.setData(qqRelationService.readQQNodeDataListByNickname(nickname));
+			webResult.setData(qqGraphService.readQQNodeDataListByNickname(nickname));
 			webResult.setResultCode(ResultCode.SUCCESS);
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
@@ -71,14 +68,17 @@ public class QQRelationController {
 	
 	@ResponseBody
 	@RequestMapping(value = "/quns", method = RequestMethod.POST)
-	public String insertQunNode(String nodeJSON) {
+	public WebResult insertQunNode(String nodeJSON) {
+		WebResult webResult = new WebResult();
 		try {
-			qqRelationService.insertQQQunNode(nodeJSON);
+			qqGraphService.insertQQQunNode(nodeJSON);
+			webResult.setResultCode(ResultCode.SUCCESS);
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
-			return e.getMessage();
+			webResult.setResultCode(ResultCode.FAILURE);
+			webResult.setFailure(e.getMessage());
 		}
-		return "success";
+		return webResult;
 	}
 	
 	@ResponseBody
@@ -86,7 +86,7 @@ public class QQRelationController {
 	public WebResult readQunNode(@PathVariable("qunNum") String qunNum) {
 		WebResult webResult = new WebResult();
 		try {
-			webResult.setData(qqRelationService.readQunNodeDataList(qunNum));
+			webResult.setData(qqGraphService.readQunNodeDataList(qunNum));
 			webResult.setResultCode(ResultCode.SUCCESS);
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
@@ -98,14 +98,17 @@ public class QQRelationController {
 	
 	@ResponseBody
 	@RequestMapping(value = "/relations", method = RequestMethod.POST)
-	public String insertRelationNode(String nodeJSON) {
+	public WebResult insertRelationNode(String nodeJSON) {
+		WebResult webResult = new WebResult();
 		try {
-			qqRelationService.insertQQQunRelation(nodeJSON);
+			qqGraphService.insertQQQunRelation(nodeJSON);
+			webResult.setResultCode(ResultCode.SUCCESS);
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
-			return e.getMessage();
+			webResult.setResultCode(ResultCode.FAILURE);
+			webResult.setFailure(e.getMessage());
 		}
-		return "success";
+		return webResult;
 	}
 	
 }

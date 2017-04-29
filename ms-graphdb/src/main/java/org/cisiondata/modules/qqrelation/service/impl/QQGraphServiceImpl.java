@@ -14,7 +14,7 @@ import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Property;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
-import org.cisiondata.modules.qqrelation.service.IQQRelationService;
+import org.cisiondata.modules.qqrelation.service.IQQGraphService;
 import org.cisiondata.modules.qqrelation.utils.ESClient;
 import org.cisiondata.utils.date.DateFormatter;
 import org.cisiondata.utils.exception.BusinessException;
@@ -30,42 +30,25 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.thinkaurelius.titan.core.TitanGraph;
 
-@Service("qqRelationService")
-public class QQRelationServiceImpl implements IQQRelationService {
+@Service("qqGraphService")
+public class QQGraphServiceImpl implements IQQGraphService {
 	
-	private Logger LOG = LoggerFactory.getLogger(QQRelationServiceImpl.class);
-	
-	private static List<String> qqNodeQueue = new ArrayList<String>();
-	
-	private static List<String> qunNodeQueue = new ArrayList<String>();
-	
-	private static List<String> relationQueue = new ArrayList<String>();
-	
-	private static final int BATCH = 1;
-	
-	@Scheduled(fixedRate = 10000, initialDelay = 10000)
-	public void listenQueue() {
-		if (!qqNodeQueue.isEmpty()) insertQQNodes(qqNodeQueue);
-		if (!qunNodeQueue.isEmpty()) insertQQQunNodes(qunNodeQueue);
-		if (!relationQueue.isEmpty()) insertQQQunRelations(relationQueue);
-	}
+	private Logger LOG = LoggerFactory.getLogger(QQGraphServiceImpl.class);
 	
 	@Override
 	public void insertQQNode(String nodeJSON) throws BusinessException {
-		qqNodeQueue.add(nodeJSON);
-		if (qqNodeQueue.size() == BATCH) {
-			insertQQNodes(qqNodeQueue);
-			qqNodeQueue.clear();
-		}
+		List<String> nodes = new ArrayList<String>();
+		nodes.add(nodeJSON);
+		insertQQNodes(nodes);
 	}
 	
 	@Override
 	public void insertQQNodes(List<String> nodes) throws BusinessException {
+		if (null == nodes || nodes.size() == 0) return;
 		TitanGraph graph = TitanUtils.getInstance().getGraph();
 		try {
 			for (int i = 0, len = nodes.size(); i < len; i++) {
@@ -102,15 +85,14 @@ public class QQRelationServiceImpl implements IQQRelationService {
 	
 	@Override
 	public void insertQQQunNode(String nodeJSON) throws BusinessException {
-		qunNodeQueue.add(nodeJSON);
-		if (qunNodeQueue.size() == BATCH) {
-			insertQQQunNodes(qunNodeQueue);
-			qunNodeQueue.clear();
-		}
+		List<String> nodes = new ArrayList<String>();
+		nodes.add(nodeJSON);
+		insertQQQunNodes(nodes);
 	}
 	
 	@Override
 	public void insertQQQunNodes(List<String> nodes) throws BusinessException {
+		if (null == nodes || nodes.size() == 0) return;
 		TitanGraph graph = TitanUtils.getInstance().getGraph();
 		try {
 			for (int i = 0, len = nodes.size(); i < len; i++) {
@@ -155,15 +137,14 @@ public class QQRelationServiceImpl implements IQQRelationService {
 	
 	@Override
 	public void insertQQQunRelation(String nodeJSON) throws BusinessException {
-		relationQueue.add(nodeJSON);
-		if (relationQueue.size() == BATCH) {
-			insertQQQunRelations(relationQueue);
-			relationQueue.clear();
-		}
+		List<String> nodes = new ArrayList<String>();
+		nodes.add(nodeJSON);
+		insertQQQunRelations(nodes);
 	}
 	
 	@Override
 	public void insertQQQunRelations(List<String> nodes) throws BusinessException {
+		if (null == nodes || nodes.size() == 0) return;
 		TitanGraph graph = TitanUtils.getInstance().getGraph();
 		for (int i = 0, len = nodes.size(); i < len; i++) {
 			Map<String, Object> node = GsonUtils.fromJsonToMap(nodes.get(i));
