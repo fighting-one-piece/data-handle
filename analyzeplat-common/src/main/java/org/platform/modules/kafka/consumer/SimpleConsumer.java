@@ -39,7 +39,8 @@ public class SimpleConsumer extends Thread {
 	private ConsumerConnector createConsumerConnector() {
 		Properties properties = new Properties();
 		// zookeeper配置
-		properties.put("zookeeper.connect", "192.168.0.15:2181,192.168.0.16:2181,192.168.0.17:2181/kafka");
+		properties.put("zookeeper.connect", "192.168.0.115:2181/kafka");
+//		properties.put("zookeeper.connect", "192.168.0.15:2181,192.168.0.16:2181,192.168.0.17:2181/kafka");
 		properties.put("zookeeper.session.timeout.ms", "400");
 		properties.put("zookeeper.sync.time.ms", "200");
 		properties.put("enable.auto.commit", "true");

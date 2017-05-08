@@ -7,12 +7,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apdplat.word.WordSegmenter;
 import org.apdplat.word.segmentation.SegmentationAlgorithm;
 import org.apdplat.word.segmentation.Word;
-import org.apdplat.word.util.WordConfTools;
 import org.cisiondata.modules.address.entity.ADMatcher;
 import org.cisiondata.modules.address.entity.ADMatcherItem;
 import org.cisiondata.modules.address.entity.ADMatcherType;
@@ -59,13 +60,6 @@ public class AddressServiceImpl implements IAddressService, InitializingBean {
 	}
 	
 	public void initializing() {
-		WordConfTools.set("dic.path", "classpath:dictionary/administrative_division.dic,"
-				+ "classpath:dictionary/administrative_division_1.dic,"
-				+ "classpath:dictionary/administrative_division_2.dic,"
-				+ "classpath:dictionary/administrative_division_3.dic,"
-				+ "classpath:dictionary/administrative_division_4.dic,"
-				+ "classpath:dictionary/administrative_division_5.dic");
-		
 		List<String> pLines = FileUtils.readFromClasspath("dictionary/administrative_division_1.dic", new DefaultLineHandler());
 		provinces = new HashSet<String>(pLines);
 		for (int i = 0, len = pLines.size(); i < len; i++) {
@@ -113,28 +107,45 @@ public class AddressServiceImpl implements IAddressService, InitializingBean {
 	public List<String> readAdministrativeDivision(String address) throws BusinessException {
 		List<String> result = new ArrayList<String>();
 		if (StringUtils.isNotBlank(address)) {
-			List<Word> words = WordSegmenter.seg(address, SegmentationAlgorithm.MaximumMatching);
+			List<Word> words = WordSegmenter.seg(address, SegmentationAlgorithm.ReverseMaximumMatching);
 			ADMatcher adMatcher = new ADMatcher();
+			int currentMatcherValue = 0;
 			for (int i = 0, len = words.size(); i < len; i++) {
 				String word = words.get(i).getText();
+				if (word.length() == 1) break;
+				if (containsDigit(word)) {
+					adMatcher.removeLastItem();
+					break;
+				}
 				if (provinces.contains(word)) {
+					if (currentMatcherValue > ADMatcherType.PROVINCE.value()) continue;
 					if (provinceMap.containsKey(word)) word = provinceMap.get(word);
 					adMatcher.add(ADMatcherType.PROVINCE, word);
+					currentMatcherValue = ADMatcherType.PROVINCE.value();
 				} else if (cities.contains(word)) {
+					if (currentMatcherValue > ADMatcherType.CITY.value()) continue;
 					if (cityMap.containsKey(word)) word = cityMap.get(word);
 					adMatcher.add(ADMatcherType.CITY, word);
+					currentMatcherValue = ADMatcherType.CITY.value();
 				} else if (counties.contains(word)) {
+					if (currentMatcherValue > ADMatcherType.COUNTY.value()) continue;
 					if (countyMap.containsKey(word)) word = countyMap.get(word);
 					adMatcher.add(ADMatcherType.COUNTY, word);
+					currentMatcherValue = ADMatcherType.COUNTY.value();
 				} else if (towns.contains(word)) {
+					if (currentMatcherValue > ADMatcherType.TOWN.value()) continue;
 					if (townMap.containsKey(word)) word = townMap.get(word);
 					adMatcher.add(ADMatcherType.TOWN, word);
+					currentMatcherValue = ADMatcherType.TOWN.value();
 				} else if (villages.contains(word)) {
+					if (currentMatcherValue > ADMatcherType.VILLAGE.value()) continue;
 					if (villageMap.containsKey(word)) word = villageMap.get(word);
 					adMatcher.add(ADMatcherType.VILLAGE, word);
+					currentMatcherValue = ADMatcherType.VILLAGE.value();
 				} 
 			}
 			ADMatcherItem lastItem = adMatcher.lastItem();
+			if (null == lastItem) return result;
 			String lastRegion = lastItem.getWords().get(0);
 			result.add(lastRegion);
 			ADMatcherItem prevItem = adMatcher.prevItem(lastItem);
@@ -252,6 +263,12 @@ public class AddressServiceImpl implements IAddressService, InitializingBean {
 		if (map.containsKey(region)) {
 			getParentAdministrativeDivision(map.get(region), parents, --level);
 		}
+	}
+	
+	private boolean containsDigit(String word) {
+		Pattern pattern = Pattern.compile(".*\\d+.*");
+		Matcher matcher = pattern.matcher(word);
+		return !matcher.matches() ? false : true;
 	}
 	
 }

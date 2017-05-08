@@ -9,6 +9,20 @@
 
 	<name>AnalyzePlat</name>
 	<url>http://maven.apache.org</url>
+	
+	<repositories>
+		<repository>
+			<id>Public</id>
+			<name>Public Repositories</name>
+			<url>http://192.168.0.115:8081/repository/maven-public/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+	</repositories>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -73,10 +87,14 @@
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
-					<!-- <archive> <manifest> <mainClass></mainClass> </manifest> </archive> -->
+					<!--  
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
+					-->
+					<descriptors>
+						<descriptor>src/main/resources/assembly/assembly.xml</descriptor>
+					</descriptors>
 				</configuration>
 				<executions>
 					<execution>
@@ -88,6 +106,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!--  
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
@@ -106,6 +125,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			-->
 		</plugins>
 	</build>
 

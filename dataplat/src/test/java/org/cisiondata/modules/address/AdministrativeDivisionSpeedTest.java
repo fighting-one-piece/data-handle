@@ -36,7 +36,8 @@ public class AdministrativeDivisionSpeedTest {
 			long startTime = System.currentTimeMillis();
 			for (int i = 0, len = lines.size(); i < len; i++) {
 				Map<String, Object> map = GsonUtils.fromJsonToMap(lines.get(i));
-				List<String> words = extract3ADFromAddress(String.valueOf(map.get("address")));
+				extract3ADFromAddress(String.valueOf(map.get("address")));
+//				List<String> words = extract3ADFromAddress(String.valueOf(map.get("address")));
 //				System.out.println(words);
 			}
 			System.out.println(lines.size() + " spend time: " + (System.currentTimeMillis() - startTime) / 1000);
@@ -45,17 +46,23 @@ public class AdministrativeDivisionSpeedTest {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static List<String> extract3ADFromAddress(String address) {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("address", address);
-		String json = HttpUtils.sendGet("http://192.168.0.114:8060/dataplat/3/ads", params);
+		String json = HttpUtils.sendGet("http://localhost:10000/ads", params);
+//		String json = HttpUtils.sendGet("http://192.168.0.15:10000/ads", params);
+//		String json = HttpUtils.sendGet("http://192.168.0.114:8060/dataplat/ads", params);
+		System.out.println("json: " + json);
 		Map<String, Object> map = GsonUtils.fromJsonToMap(json);
+		if (null == map) return new ArrayList<String>();
 		Object data = map.get("data");
 		return null == data ? new ArrayList<String>() : GsonUtils.builder().fromJson((String) data, List.class);
 	}
 	
 	public static void main(String[] args) {
-		speed01();
+//		speed01();
+		System.out.println(extract3ADFromAddress("澄迈"));
 	}
 	
 }

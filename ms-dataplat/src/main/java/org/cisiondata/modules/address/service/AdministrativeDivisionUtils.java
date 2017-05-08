@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apdplat.word.WordSegmenter;
@@ -240,28 +242,45 @@ public class AdministrativeDivisionUtils {
 	public static List<String> extractAdministrativeDivision(String address) {
 		List<String> result = new ArrayList<String>();
 		if (StringUtils.isNotBlank(address)) {
-			List<Word> words = WordSegmenter.seg(address, SegmentationAlgorithm.MaximumMatching);
+			List<Word> words = WordSegmenter.seg(address, SegmentationAlgorithm.ReverseMaximumMatching);
 			ADMatcher adMatcher = new ADMatcher();
+			int currentMatcherValue = 0;
 			for (int i = 0, len = words.size(); i < len; i++) {
 				String word = words.get(i).getText();
+				if (word.length() == 1) break;
+				if (containsDigit(word)) {
+					adMatcher.removeLastItem();
+					break;
+				}
 				if (provinces.contains(word)) {
+					if (currentMatcherValue > ADMatcherType.PROVINCE.value()) continue;
 					if (provinceMap.containsKey(word)) word = provinceMap.get(word);
 					adMatcher.add(ADMatcherType.PROVINCE, word);
+					currentMatcherValue = ADMatcherType.PROVINCE.value();
 				} else if (cities.contains(word)) {
+					if (currentMatcherValue > ADMatcherType.CITY.value()) continue;
 					if (cityMap.containsKey(word)) word = cityMap.get(word);
 					adMatcher.add(ADMatcherType.CITY, word);
+					currentMatcherValue = ADMatcherType.CITY.value();
 				} else if (counties.contains(word)) {
+					if (currentMatcherValue > ADMatcherType.COUNTY.value()) continue;
 					if (countyMap.containsKey(word)) word = countyMap.get(word);
 					adMatcher.add(ADMatcherType.COUNTY, word);
+					currentMatcherValue = ADMatcherType.COUNTY.value();
 				} else if (towns.contains(word)) {
+					if (currentMatcherValue > ADMatcherType.TOWN.value()) continue;
 					if (townMap.containsKey(word)) word = townMap.get(word);
 					adMatcher.add(ADMatcherType.TOWN, word);
+					currentMatcherValue = ADMatcherType.TOWN.value();
 				} else if (villages.contains(word)) {
+					if (currentMatcherValue > ADMatcherType.VILLAGE.value()) continue;
 					if (villageMap.containsKey(word)) word = villageMap.get(word);
 					adMatcher.add(ADMatcherType.VILLAGE, word);
+					currentMatcherValue = ADMatcherType.VILLAGE.value();
 				} 
 			}
 			ADMatcherItem lastItem = adMatcher.lastItem();
+			if (null == lastItem) return result;
 			String lastRegion = lastItem.getWords().get(0);
 			result.add(lastRegion);
 			ADMatcherItem prevItem = adMatcher.prevItem(lastItem);
@@ -276,10 +295,17 @@ public class AdministrativeDivisionUtils {
 				result.add(lastRegion);
 				prevItem = adMatcher.prevItem(prevItem);
 			}
+			System.out.println(WordSegmenter.seg(address, SegmentationAlgorithm.MaximumMatching));
 			System.out.println(words);
 		}
 		Collections.reverse(result);
 		return result;
+	}
+	
+	private static boolean containsDigit(String word) {
+		Pattern pattern = Pattern.compile(".*\\d+.*");
+		Matcher matcher = pattern.matcher(word);
+		return !matcher.matches() ? false : true;
 	}
 	
 	public static void main(String[] args) {
@@ -292,11 +318,12 @@ public class AdministrativeDivisionUtils {
 //		System.out.println(extractAdministrativeDivision("六一"));
 //		System.out.println(extractAdministrativeDivision("武城县"));
 //		System.out.println(extractAdministrativeDivision("武城县老车站南张庄新区2－1－402"));
-	    //[四川省, 乐山市, 市中区, 龙山路, 老车站社区]
-		System.out.println(extractAdministrativeDivision("滨城区黄河6路与渤海7路胜滨小区东区53号楼1单元1号"));
-		System.out.println(extractAdministrativeDivision("湖北省鄂州市华容区"));
-		System.out.println(extractAdministrativeDivision("湖北省鄂州市华容区仁义"));
-		System.out.println(extractAdministrativeDivision("湖北省鄂州市华容区仁义路顺丰快递2楼速8台球"));
+//	    //[四川省, 乐山市, 市中区, 龙山路, 老车站社区]
+//		System.out.println(extractAdministrativeDivision("滨城区黄河6路与渤海7路胜滨小区东区53号楼1单元1号"));
+//		System.out.println(extractAdministrativeDivision("湖北省鄂州市华容区"));
+//		System.out.println(extractAdministrativeDivision("湖北省鄂州市华容区仁义"));
+//		System.out.println(extractAdministrativeDivision("湖北省鄂州市华容区仁义路顺丰快递2楼速8台球"));
+		System.out.println(extractAdministrativeDivision("洪武路88号顺丰速运"));
 	}
 	
 }

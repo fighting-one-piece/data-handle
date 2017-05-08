@@ -13,6 +13,7 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.platform.utils.json.GsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,6 +59,29 @@ public class FileUtils {
 			bw = new BufferedWriter(new OutputStreamWriter(out));
 			for (int i = 0, len = lines.size(); i < len; i++) {
 				bw.write(lines.get(i));
+				bw.newLine();
+			}
+			bw.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (null != out) out.close();
+				if (null != bw) bw.close();
+			} catch (Exception e) {
+				LOG.error(e.getMessage(), e);
+			}
+		}
+	}
+	
+	public static void writeJSON(String dest, List<Object> objects) {
+		OutputStream out = null;
+		BufferedWriter bw = null;
+		try {
+			out = new FileOutputStream(new File(dest));
+			bw = new BufferedWriter(new OutputStreamWriter(out));
+			for (int i = 0, len = objects.size(); i < len; i++) {
+				bw.write(GsonUtils.builder().toJson(objects.get(i)));
 				bw.newLine();
 			}
 			bw.flush();

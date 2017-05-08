@@ -22,6 +22,7 @@ public class QunNodeConsumeServiceImpl implements IConsumeService {
 	@Override
 	public void handle(List<String> messages) throws RuntimeException {
 		qqGraphService.insertQQQunNodes(messages);
+		System.out.println(messages.size() + " qun messages consume finish!!!!!!");
 	}
 	
 	

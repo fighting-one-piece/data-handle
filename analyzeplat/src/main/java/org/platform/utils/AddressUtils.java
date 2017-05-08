@@ -5,16 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.platform.utils.http.HttpUtils;
+import org.platform.utils.http.HttpClientUtils;
 import org.platform.utils.json.GsonUtils;
 
 public class AddressUtils {
 	
 	@SuppressWarnings("unchecked")
 	public static List<String> extractADFromAddress(String address) {
-		Map<String, Object> params = new HashMap<String, Object>();
+		Map<String, String> params = new HashMap<String, String>();
 		params.put("address", address);
-		String json = HttpUtils.sendGet("http://192.168.0.114:8060/dataplat/ads", params);
+		String json = HttpClientUtils.get("http://192.168.0.114:18080/ads", params, "UTF-8");
 		Map<String, Object> map = GsonUtils.fromJsonToMap(json);
 		Object data = map.get("data");
 		return null == data ? new ArrayList<String>() : GsonUtils.builder().fromJson((String) data, List.class);
@@ -22,9 +22,9 @@ public class AddressUtils {
 	
 	@SuppressWarnings("unchecked")
 	public static List<String> extract3ADFromAddress(String address) {
-		Map<String, Object> params = new HashMap<String, Object>();
+		Map<String, String> params = new HashMap<String, String>();
 		params.put("address", address);
-		String json = HttpUtils.sendGet("http://192.168.0.114:8060/dataplat/3/ads", params);
+		String json = HttpClientUtils.get("http://192.168.0.114:18080/3/ads", params, "UTF-8");
 		Map<String, Object> map = GsonUtils.fromJsonToMap(json);
 		Object data = map.get("data");
 		return null == data ? new ArrayList<String>() : GsonUtils.builder().fromJson((String) data, List.class);
@@ -32,9 +32,9 @@ public class AddressUtils {
 
 	@SuppressWarnings("unchecked")
 	public static List<String> extract5ADFromAddress(String address) {
-		Map<String, Object> params = new HashMap<String, Object>();
+		Map<String, String> params = new HashMap<String, String>();
 		params.put("address", address);
-		String json = HttpUtils.sendGet("http://192.168.0.114:8060/dataplat/5/ads", params);
+		String json = HttpClientUtils.get("http://192.168.0.114:18080/5/ads", params, "UTF-8");
 		Map<String, Object> map = GsonUtils.fromJsonToMap(json);
 		Object data = map.get("data");
 		return null == data ? new ArrayList<String>() : GsonUtils.builder().fromJson((String) data, List.class);

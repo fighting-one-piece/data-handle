@@ -83,11 +83,13 @@ public class QQRelationTest {
 	}
 	
 	public static void t4() throws IOException {
-		List<String> lines = FileUtils.readLines(new File("F:\\document\\doc\\201704\\qqdata"));
-		for (String line : lines) {
-			IQQGraphService qqRelationService = new QQGraphServiceImpl();
-			qqRelationService.insertQQNode(line);
-		}
+		List<String> lines = FileUtils.readLines(new File("F:\\document\\doc\\201704\\qqdata10000"));
+		IQQGraphService qqRelationService = new QQGraphServiceImpl();
+		qqRelationService.insertQQNodes(lines);
+//		for (String line : lines) {
+//			IQQGraphService qqRelationService = new QQGraphServiceImpl();
+//			qqRelationService.insertQQNode(line);
+//		}
 	}
 	
 	public static void t5() throws InterruptedException, ExecutionException {
@@ -113,9 +115,15 @@ public class QQRelationTest {
 		System.out.println("version: {}" + ur.getVersion());
 	}
 	
+	public static void t6() {
+		IQQGraphService qqRelationService = new QQGraphServiceImpl();
+		List<Map<String, Object>> qqNodes = qqRelationService.readQQNodeDataList("374767247");
+		qqNodes.forEach(qq -> System.out.println(qq));
+	}
+	
 	public static void main(String[] args) throws Exception {
-//		t5();
-		t4();
+		t6();
+//		t4();
 		TitanUtils.getInstance().closeGraph();
 	}
 

@@ -22,6 +22,7 @@ public class QQRelationConsumeServiceImpl implements IConsumeService {
 	@Override
 	public void handle(List<String> messages) throws RuntimeException {
 		qqGraphService.insertQQQunRelations(messages);
+		System.out.println(messages.size() + " qqrelation messages consume finish!!!!!!");
 	}
 	
 	

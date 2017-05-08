@@ -71,5 +71,9 @@ public class ADMatcher {
 		return lastItem;
 	}
 	
+	public void removeLastItem() {
+		getItems().remove(getItems().size() - 1);
+	}
+	
 }
 

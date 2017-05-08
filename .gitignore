@@ -15,4 +15,5 @@ log
 *.class
 */org.eclipse.wst.common.component
 */org.platform.modules.mapreduce.clean
-
+dataprocess
+stormprocess

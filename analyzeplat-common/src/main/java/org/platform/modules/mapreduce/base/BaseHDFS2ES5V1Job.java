@@ -21,13 +21,13 @@ public abstract class BaseHDFS2ES5V1Job extends BaseJob {
 	@Override
 	public int run(String[] args) throws Exception {
 		Configuration conf = newConfiguration();
-		conf.set("esIndex", args[0]);
-		conf.set("esType", args[1]); 
 		String[] oArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
 		if (oArgs.length < 3) {
 			LOG.error("error! need three parameters at least!");
 			System.exit(2);
 		}
+		conf.set("esIndex", oArgs[0]);
+		conf.set("esType", oArgs[1]); 
 		Job job = Job.getInstance(conf, getJobName());
 		job.setJarByClass(getClass());
 		job.setMapperClass(getMapperClass());

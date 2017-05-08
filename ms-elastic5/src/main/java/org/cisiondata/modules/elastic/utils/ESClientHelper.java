@@ -28,6 +28,8 @@ import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequestBuilder;
 import org.elasticsearch.action.delete.DeleteResponse;
+import org.elasticsearch.action.search.ClearScrollRequestBuilder;
+import org.elasticsearch.action.search.ClearScrollResponse;
 import org.elasticsearch.action.search.MultiSearchRequestBuilder;
 import org.elasticsearch.action.search.MultiSearchResponse;
 import org.elasticsearch.action.search.MultiSearchResponse.Item;
@@ -499,6 +501,31 @@ public class ESClientHelper {
 			LOG.error(e.getMessage(), e);
 		} 
 	}
+	
+	/**
+     * 清除滚动ID
+     * @param client
+     * @param scrollIdList
+     * @return
+     */
+    public static boolean clearScroll(Client client, List<String> scrollIdList){
+        ClearScrollRequestBuilder clearScrollRequestBuilder = client.prepareClearScroll();
+        clearScrollRequestBuilder.setScrollIds(scrollIdList);
+        ClearScrollResponse response = clearScrollRequestBuilder.get();
+        return response.isSucceeded();
+    }
+    /**
+     * 清除滚动ID
+     * @param client
+     * @param scrollId
+     * @return
+     */
+    public static boolean clearScroll(Client client, String scrollId){
+        ClearScrollRequestBuilder clearScrollRequestBuilder = client.prepareClearScroll();
+        clearScrollRequestBuilder.addScrollId(scrollId);
+        ClearScrollResponse response = clearScrollRequestBuilder.get();
+        return response.isSucceeded();
+    }
 	
 	/**
 	 * 分词

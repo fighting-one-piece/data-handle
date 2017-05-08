@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
@@ -76,6 +75,7 @@ public class QQGraphServiceImpl implements IQQGraphService {
 						}
 					}
 				}
+				if (i%100==0) System.out.println(i + " records handle finish!!!!");
 			}
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
@@ -105,15 +105,7 @@ public class QQGraphServiceImpl implements IQQGraphService {
 						VertexProperty<String> idVP = vertex.property("uniqueid");
 						String uniqueid = null != idVP.value() ? idVP.value() : "";
 						if (!uniqueid.equals(node.get("_id"))) {
-							String cnote = null;
-							if (vertexPropertiesKeys.contains("cnote")) {
-								VertexProperty<String> cnoteVP = vertex.property("cnote");
-								cnote = null != cnoteVP.value() ? cnoteVP.value() : "";
-							} 
-							cnote = cnote + nodes.get(i);
-							if (StringUtils.isNotBlank(cnote)) {
-								vertex.properties("cnote", cnote);
-							}
+							updateESNodeCnoteData("titan", "qunnode", uniqueid, nodes.get(i));
 						}
 					}
 				} else {
@@ -282,11 +274,9 @@ public class QQGraphServiceImpl implements IQQGraphService {
 				SearchHit hit = sr.getHits().getHits()[0];
 				UpdateRequestBuilder urb = client.prepareUpdate("titan", "qqnode", hit.getId());
 				Object cnoteObj = hit.getSource().get("cnote");
-				System.out.println("cnote: " + cnoteObj);
 				urb.setDoc("cnote", null != cnoteObj ? cnoteObj + cnote : cnote);
 				UpdateResponse ur = urb.execute().get();
 				LOG.info("version: {}", ur.getVersion());
-				System.out.println(ur.getVersion());
 			}
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);

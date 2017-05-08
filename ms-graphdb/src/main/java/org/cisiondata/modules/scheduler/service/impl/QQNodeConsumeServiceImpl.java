@@ -16,17 +16,14 @@ public class QQNodeConsumeServiceImpl implements IConsumeService {
 	
 	@Override
 	public void handle(String message) throws RuntimeException {
-		System.out.println("qq node consumer: " + message);
 		qqGraphService.insertQQNode(message);
 	}
 	
 	@Override
 	public void handle(List<String> messages) throws RuntimeException {
-		for (int i = 0, len = messages.size(); i < len; i++) {
-			System.out.println("qq node consumer: " + messages.get(i));
-		}
-		System.out.println("handle finish!!!!!!");
+		System.out.println(messages.size() + " qq messages consume start!!!!!!");
 		qqGraphService.insertQQNodes(messages);
+		System.out.println(messages.size() + " qq messages consume finish!!!!!!");
 	}
 	
 	

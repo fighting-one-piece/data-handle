@@ -115,8 +115,10 @@ class ConsumerTask implements Runnable {
 		while (iterator.hasNext()) {
 			MessageAndMetadata<byte[], byte[]> mam = iterator.next();
 			String message = new String(mam.message());
+			/**
 			System.out.println(Thread.currentThread().getName() + ": partition[" + mam.partition() + "]," 
 					+ "offset[" + mam.offset() + "], " + message); 
+			*/
 			messages.add(message);
 			if (messages.size() == batchNum) {
 				consumeService.handle(messages);
