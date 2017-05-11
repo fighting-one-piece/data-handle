@@ -7,7 +7,8 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
 
 public class StringMessageAndMetadataScheme extends StringScheme implements MessageMetadataScheme {
-    private static final long serialVersionUID = -5441841920447947374L;
+	
+    private static final long serialVersionUID = 1L;
 
     public static final String STRING_SCHEME_PARTITION_KEY = "partition";
     public static final String STRING_SCHEME_OFFSET = "offset";

@@ -1,6 +1,7 @@
 package org.cisiondata.modules.jstorm.bolt.elastic;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +37,6 @@ public class ElasticHelper {
 	}
 	
 	public void add(Tuple tuple) {
-		System.out.println("elastic: " + tuple.getString(0));
 		tuples.add(tuple);
 		datas.add(tuple.getString(0));
 		if (tuples.size() == batchSize) {
@@ -62,22 +62,24 @@ public class ElasticHelper {
 		datas.clear();
 	}
 	
-	public static void bulkInsert(List<String> datas) {
+	public void bulkInsert(List<String> datas) {
 		if (null == datas || datas.size() == 0) return;
 		Client client = ESClient.getInstance().getClient();
 		BulkRequestBuilder bulkRequestBuilder = client.prepareBulk();
 		try {
 			IndexRequestBuilder irb = null;
-			Map<String, Object> source = null;
+			Map<String, Object> osource = null;
+			Map<String, Object> nsource = null;
 			for (int i = 0, len = datas.size(); i < len; i++) {
-				source = GsonUtils.fromJsonToMap(datas.get(i));
-				String index = String.valueOf(source.remove("index"));
-				String type = String.valueOf(source.remove("type"));
-				if (source.containsKey("_id")) {
-					String _id = (String) source.remove("_id");
-					irb = client.prepareIndex(index, type, _id).setSource(source);
+				osource = GsonUtils.fromJsonToMap(datas.get(i));
+				String index = String.valueOf(osource.remove("index"));
+				String type = String.valueOf(osource.remove("type"));
+				nsource = removeNotNeedSearchColumn(osource);
+				if (nsource.containsKey("_id")) {
+					String _id = (String) nsource.remove("_id");
+					irb = client.prepareIndex(index, type, _id).setSource(nsource);
 				} else {
-					irb = client.prepareIndex(index, type).setSource(source);
+					irb = client.prepareIndex(index, type).setSource(nsource);
 				}
 				bulkRequestBuilder.add(irb);
 			}
@@ -88,6 +90,17 @@ public class ElasticHelper {
 		if (bulkResponse.hasFailures()) {
 			LOG.info(bulkResponse.buildFailureMessage());
 		}
+		System.out.println("elastic5 insert " + datas.size() + " records finish!");
+	}
+	
+	private Map<String, Object> removeNotNeedSearchColumn(Map<String, Object> map) {
+		Map<String, Object> newmap = new HashMap<String, Object>();
+		for (Map.Entry<String, Object> entry : map.entrySet()) {
+			String key = entry.getKey();
+			if (key.startsWith("c")) continue;
+			newmap.put(key, entry.getValue());
+		}
+		return newmap;
 	}
 	
 }

@@ -46,11 +46,11 @@ public class KafkaSpout extends BaseRichSpout {
         _spoutConfig = spoutConf;
     }
 
-    @SuppressWarnings({ "rawtypes", "deprecation", "unchecked" })
+    @SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
     public void open(Map conf, final TopologyContext context, final SpoutOutputCollector collector) {
         _collector = collector;
-        String topologyInstanceId = context.getStormId();
+        String topologyInstanceId = context.getTopologyId();
         Map<String, Object> stateConf = new HashMap<>(conf);
         List<String> zkServers = _spoutConfig.zkServers;
         if (zkServers == null) {

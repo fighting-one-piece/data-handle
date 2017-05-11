@@ -12,7 +12,7 @@ public class HBaseBolt extends BaseRichBolt {
 
 	private static final long serialVersionUID = 1L;
 	
-	private int batchSize = 2;
+	private int batchSize = 1000;
 	
 	private HBaseHelper hbaseHelper = null;
 	

@@ -6,18 +6,21 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.platform.utils.json.GsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class BaseHDFS2ES5V1Mapper extends Mapper<LongWritable, Text, NullWritable, NullWritable> {
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+public abstract class BaseHDFS2ES5V1Mapper extends Mapper<LongWritable, Text, Text, LongWritable> {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(BaseHDFS2ES5V1Mapper.class);
+	
+	private Gson gson = null;
 	
 	private String esIndex = null;
 	
@@ -31,11 +34,15 @@ public abstract class BaseHDFS2ES5V1Mapper extends Mapper<LongWritable, Text, Nu
 
 	private static final String TOPIC = "elastic5";
 	
+	private long totalLines = 0L;
+	
 	private Map<String, String> messages = new HashMap<String, String>(BATCH);
 	
 	@Override
 	protected void setup(Context context) throws IOException, InterruptedException {
 		super.setup(context);
+		this.gson = new GsonBuilder().serializeSpecialFloatingPointValues()
+				.setDateFormat("yyyy-MM-dd HH:mm:ss").create();
 		this.esIndex = (String) context.getConfiguration().get("esIndex");
 		this.esType = (String) context.getConfiguration().get("esType");
 		Properties properties = new Properties();  
@@ -56,10 +63,11 @@ public abstract class BaseHDFS2ES5V1Mapper extends Mapper<LongWritable, Text, Nu
 	
 	public abstract String convertToMessage(Map<String, Object> data);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 		try {
-			Map<String, Object> data = GsonUtils.fromJsonToMap(value.toString());
+			Map<String, Object> data = gson.fromJson(value.toString(), Map.class);
 			data.put("index", esIndex);
 			data.put("type", esType);
 			messages.put(String.valueOf(data.get("_id")), convertToMessage(data));
@@ -67,6 +75,7 @@ public abstract class BaseHDFS2ES5V1Mapper extends Mapper<LongWritable, Text, Nu
 				sendMessages(messages);
 				messages.clear();
 			}
+			totalLines++;
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 		}
@@ -77,6 +86,7 @@ public abstract class BaseHDFS2ES5V1Mapper extends Mapper<LongWritable, Text, Nu
 		super.cleanup(context);
 		if (messages.size() > 0) sendMessages(messages);
 		producer.close();
+		context.write(new Text("lines"), new LongWritable(totalLines));
 	}
 	
 	private void sendMessages(Map<String, String> messages) {

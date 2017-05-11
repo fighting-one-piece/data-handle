@@ -9,6 +9,7 @@ WEB-INF/classes/
 bin
 lib
 log
+logs
 *.log
 *.bat
 *.dat

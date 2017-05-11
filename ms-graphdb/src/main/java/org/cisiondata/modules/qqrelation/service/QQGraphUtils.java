@@ -18,7 +18,7 @@ import com.thinkaurelius.titan.core.TitanGraph;
 
 public class QQGraphUtils {
 	
-	public void buildSchema(TitanGraph graph) {
+	public void buildOriginalSchema(TitanGraph graph) {
 		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "uniqueid", String.class);
 		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "qqNum", String.class);
 		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "password", String.class);
@@ -26,24 +26,59 @@ public class QQGraphUtils {
 		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "ipAddress", String.class);
 		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "netDate", String.class);
 		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "netTime", String.class);
-		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "age", Integer.class);
-		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "gender", Integer.class);
+		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "age", String.class);
+		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "gender", String.class);
 		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "state", String.class);
 		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "qqCoin", String.class);
 		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "qqPoint", String.class);
 		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "province", String.class);
 		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "security", String.class);
 		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "cnote", String.class);
-		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "insertTime", Date.class);
 		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "updateTime", Date.class);
 		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "sourceFile", String.class);
+		/**
+		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "insertTime", Date.class);
 		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "inputPerson", String.class);
+		*/
 		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqqunnode", "qunNum", String.class);
 		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqqunnode", "qunName", String.class);
 		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqqunnode", "qunNotice", String.class);
 		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqqunnode", "qunPersonNum", Integer.class);
 		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqqunnode", "qunCreateDate", String.class);
 		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqqunnode", "qunLevel", Integer.class);
+	    
+		TitanUtils.getInstance().buildEdgeLabel("included");
+		TitanUtils.getInstance().buildEdgeLabel("including");
+	}
+	
+	public void buildSchema(TitanGraph graph) {
+		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "uid", String.class);
+		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "i1", String.class);
+		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "i9", String.class);
+		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "c1", String.class);
+		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "a26", String.class);
+		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "c2", String.class);
+		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "c3", String.class);
+		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "o23", String.class);
+		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "c129", String.class);
+		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "c4", String.class);
+		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "c5", String.class);
+		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "c6", String.class);
+		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "a5", String.class);
+		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "c134", String.class);
+		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "o7", String.class);
+		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "c138", Date.class);
+		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "c136", String.class);
+		/**
+		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "insertTime", Date.class);
+		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "inputPerson", String.class);
+		*/
+		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqqunnode", "i50", String.class);
+		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqqunnode", "o24", String.class);
+		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqqunnode", "c4", String.class);
+		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqqunnode", "c1", Integer.class);
+		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqqunnode", "c2", String.class);
+		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqqunnode", "c3", Integer.class);
 	    
 		TitanUtils.getInstance().buildEdgeLabel("included");
 		TitanUtils.getInstance().buildEdgeLabel("including");

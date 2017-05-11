@@ -212,7 +212,6 @@ public class KafkaUtils {
         return msgs;
     }
 
-
     public static Iterable<List<Object>> generateTuples(KafkaConfig kafkaConfig, Message msg, String topic) {
         Iterable<List<Object>> tups;
         ByteBuffer payload = msg.payload();
@@ -225,6 +224,8 @@ public class KafkaUtils {
         } else {
             if (kafkaConfig.scheme instanceof StringMultiSchemeWithTopic) {
                 tups = ((StringMultiSchemeWithTopic)kafkaConfig.scheme).deserializeWithTopic(topic, payload);
+            } else if (kafkaConfig.scheme instanceof StringMultiScheme) {
+            	tups = ((StringMultiScheme) kafkaConfig.scheme).deserialize(payload);
             } else {
                 tups = kafkaConfig.scheme.deserialize(payload.array());
             }
@@ -239,7 +240,6 @@ public class KafkaUtils {
         }
         return scheme.deserializeMessageWithMetadata(payload, partition, offset);
     }
-
 
     public static List<Partition> calculatePartitionsForTask(List<GlobalPartitionInformation> partitons, int totalTasks, int taskIndex) {
         Preconditions.checkArgument(taskIndex < totalTasks, "task index must be less that total tasks");

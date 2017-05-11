@@ -55,6 +55,7 @@
 		<elasticsearch.version>5.3.0</elasticsearch.version>
 		<hbase.version>1.2.3</hbase.version>
 		<kafka.version>0.10.0.0</kafka.version>
+		<jedis.version>2.9.0</jedis.version>
 	</properties>
  
 	<dependencies>
@@ -284,6 +285,13 @@
 		    <groupId>org.apache.kafka</groupId>
 		    <artifactId>kafka-clients</artifactId>
 		    <version>${kafka.version}</version>
+		</dependency>
+		
+		<!-- Redis客户端库 -->
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<version>${jedis.version}</version>
 		</dependency>
 		
 	</dependencies>

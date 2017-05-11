@@ -32,7 +32,6 @@ public class HBaseHelper {
 	}
 	
 	public void add(Tuple tuple) {
-		System.out.println("hbase: " + tuple.getString(0));
 		tuples.add(tuple);
 		datas.add(tuple.getString(0));
 		if (tuples.size() == batchSize) {
@@ -74,11 +73,12 @@ public class HBaseHelper {
 			String rowKey = String.valueOf(source.remove("_id"));
 			Put put = new Put(Bytes.toBytes(rowKey));
 			for (Map.Entry<String, Object> entry : source.entrySet()) {
-				put.addColumn(Bytes.toBytes("i"), Bytes.toBytes(entry.getKey()), SerializerUtils.write(entry.getValue()));
+				String column = entry.getKey();
+				String family = column.startsWith("c") ? "i" : "s";
+				put.addColumn(Bytes.toBytes(family), Bytes.toBytes(column), SerializerUtils.write(entry.getValue()));
 			}
 			puts.add(put);
 		}
-		
 		for (Map.Entry<String, List<Put>> entry : map.entrySet()) {
 			try {
 				HBaseUtils.insertRecords(entry.getKey(), entry.getValue());
@@ -86,6 +86,7 @@ public class HBaseHelper {
 				e.printStackTrace();
 			}
 		}
+		System.out.println("hbase insert " + datas.size() + " records finish!");
 	}
 	
 }

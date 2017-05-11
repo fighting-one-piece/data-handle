@@ -12,7 +12,7 @@ public class ElasticBolt extends BaseRichBolt {
 
 	private static final long serialVersionUID = 1L;
 	
-	private int batchSize = 2;
+	private int batchSize = 1000;
 	
 	private ElasticHelper elasticHelper = null;
 	
