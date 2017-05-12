@@ -8,6 +8,7 @@ import org.cisiondata.modules.elastic.entity.SearchParams;
 import org.cisiondata.modules.elastic.service.IElastic5Service;
 import org.cisiondata.modules.elastic.utils.Elastic5Client;
 import org.cisiondata.utils.exception.BusinessException;
+import org.cisiondata.utils.param.ParamsUtils;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
@@ -21,12 +22,13 @@ public class Elastic5ServiceImpl implements IElastic5Service {
 	@Override
 	public Object readDataList(String indices, String types, String fields, String keywords, int highLight,
 			Integer currentPageNum, Integer rowNumPerPage) throws BusinessException {
-		
-		
-		
+		ParamsUtils.checkNotNull(indices, "indices is null");
+		ParamsUtils.checkNotNull(types, "types is null");
+		ParamsUtils.checkNotNull(keywords, "keywords is null");
 		SearchParams params = new SearchParams(indices, types, fields, keywords, highLight, currentPageNum, rowNumPerPage);
 		
-		SearchRequestBuilder searchRequestBuilder = Elastic5Client.getInstance().getClient().prepareSearch().setTypes();
+		SearchRequestBuilder searchRequestBuilder = Elastic5Client.getInstance().getClient()
+				.prepareSearch(params.indices()).setTypes(params.types());
 		searchRequestBuilder.setQuery(null);
 		searchRequestBuilder.setSearchType(SearchType.DFS_QUERY_THEN_FETCH);
 		searchRequestBuilder.setSize(100);
