@@ -120,11 +120,11 @@ public class HBaseUtils {
 	}
 
 	/** 插入一行记录*/
-	public static void insertRecord(String tableName, String rowKey, String family, String qualifier, String value) {
+	public static void insertRecord(String tableName, String rowKey, String family, String qualifier, Object value) {
 		try {
 			HTable table = (HTable) connection.getTable(TableName.valueOf(tableName));
 			Put put = new Put(Bytes.toBytes(rowKey));
-			put.addColumn(Bytes.toBytes(family), Bytes.toBytes(qualifier), Bytes.toBytes(value));
+			put.addColumn(Bytes.toBytes(family), Bytes.toBytes(qualifier), SerializerUtils.write(value));
 			table.put(put);
 			LOG.info("insert recored " + rowKey + " to table " + tableName + " success.");
 		} catch (IOException e) {
@@ -279,7 +279,7 @@ public class HBaseUtils {
 //		HBaseUtils.insertRecord("user", rowKey, "education", "school", "ksez");
 //		HBaseUtils.insertRecord("user", rowKey, "education", "univercity", "xjdx");
 //		HBaseUtils.printRecords(HBaseUtils.getRecords("user"));
-		HBaseUtils.printRecords(HBaseUtils.getRecords("logistics"));
+		HBaseUtils.printRecords(HBaseUtils.getRecords("student"));
 	}
 
 }

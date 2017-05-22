@@ -87,7 +87,7 @@ public class DataImportUtils {
 	
 	public static void insertKafkaQQNodeDatas() {
 		try {
-			List<String> lines = FileUtils.readFromAbsolute("F:\\document\\doc\\201705\\internet.txt", new DefaultLineHandler());
+			List<String> lines = FileUtils.readFromAbsolute("F:\\document\\doc\\201705\\qq20000.txt", new DefaultLineHandler());
 			produce(lines, "qqnode", 6);
 			System.out.println(lines.size() + " records produce finish!!!");
 		} catch (FileNotFoundException e) {

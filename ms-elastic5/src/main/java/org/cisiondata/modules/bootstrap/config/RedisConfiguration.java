@@ -1,5 +1,7 @@
 package org.cisiondata.modules.bootstrap.config;
 
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.cisiondata.utils.redis.JedisClusterFactory;
 import org.cisiondata.utils.redis.RedisObjectSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,13 +22,18 @@ public class RedisConfiguration {
 	private Logger LOG = LoggerFactory.getLogger(RedisConfiguration.class);
 	
 	@Bean
-	@ConfigurationProperties(prefix = "spring.redis")
+	@ConfigurationProperties(prefix = "spring.redis.pool")
 	public JedisPoolConfig getJedisPoolConfig() {
 		return new JedisPoolConfig();
 	}
 	
 	@Bean
-	@ConfigurationProperties(prefix = "spring.redis")
+	@ConfigurationProperties(prefix = "spring.redis.pool")
+	public GenericObjectPoolConfig getGenericObjectPoolConfig() {
+		return new GenericObjectPoolConfig();
+	}
+	
+	@Bean
 	public JedisConnectionFactory getJedisConnectionFactory() {
 		JedisConnectionFactory factory = new JedisConnectionFactory();
 		factory.setPoolConfig(getJedisPoolConfig());
@@ -48,6 +55,14 @@ public class RedisConfiguration {
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new RedisObjectSerializer());
         return template;
+	}
+	
+	@Bean(name = "jedisCluster")
+	@ConfigurationProperties(prefix = "spring.redis.cluster")
+	public JedisClusterFactory getJedisClusterFactory() {
+		JedisClusterFactory jedisClusterFactory = new JedisClusterFactory();
+		jedisClusterFactory.setGenericObjectPoolConfig(getGenericObjectPoolConfig());
+		return jedisClusterFactory;
 	}
 	
 }

@@ -201,7 +201,6 @@ public class Elastic2ServiceImpl extends Elastic2AbstractServiceImpl implements 
 		SearchHit[] hitArray = response.getHits().getHits();
 		QueryResult<Map<String, Object>> qr = new QueryResult<Map<String, Object>>();
 		qr.setTotalRowNum(response.getHits().getTotalHits());
-		qr.setScrollId(response.getScrollId());
 		qr.setResultList(buildResultList(hitArray, true, isHighLight, isReturnScore));
 		return qr;
 	}

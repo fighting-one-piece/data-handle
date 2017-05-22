@@ -24,11 +24,11 @@ public class Elastic5Controller {
 	
 	@ResponseBody
 	@RequestMapping(value = "/search", method = RequestMethod.GET)
-	public WebResult search(String i, String t, String c, String q, int hl) {
+	public WebResult search(String i, String t, String q, int hl, Integer pn, Integer rn) {
 		WebResult result = new WebResult();
 		try {
+			result.setData(elastic5Service.readDataList(i, t, q, hl, pn, rn));
 			result.setCode(ResultCode.SUCCESS.getCode());
-			result.setData(null);
 		} catch (BusinessException be) {
 			result.setCode(be.getCode());
 			result.setFailure(be.getMessage());

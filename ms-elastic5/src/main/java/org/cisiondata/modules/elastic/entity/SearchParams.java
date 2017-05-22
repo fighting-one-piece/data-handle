@@ -14,8 +14,16 @@ public class SearchParams {
 	
 	private Integer currentPageNum = null;
 	
-	private int rowNumPerPage = 10;
+	private Integer rowNumPerPage = 10;
 
+	public SearchParams(String indices, String types, String keywords, int highLight) {
+		super();
+		this.indices = indices;
+		this.types = types;
+		this.keywords = keywords;
+		this.highLight = highLight;
+	}
+	
 	public SearchParams(String indices, String types, String fields, String keywords, int highLight) {
 		super();
 		this.indices = indices;
@@ -24,9 +32,20 @@ public class SearchParams {
 		this.keywords = keywords;
 		this.highLight = highLight;
 	}
+	
+	public SearchParams(String indices, String types, String keywords, int highLight,
+			Integer currentPageNum, Integer rowNumPerPage) {
+		super();
+		this.indices = indices;
+		this.types = types;
+		this.keywords = keywords;
+		this.highLight = highLight;
+		this.currentPageNum = currentPageNum;
+		this.rowNumPerPage = rowNumPerPage;
+	}
 
 	public SearchParams(String indices, String types, String fields, String keywords, int highLight,
-			int currentPageNum, int rowNumPerPage) {
+			Integer currentPageNum, Integer rowNumPerPage) {
 		super();
 		this.indices = indices;
 		this.types = types;
@@ -50,7 +69,7 @@ public class SearchParams {
 	}
 	
 	public String[] keywords() {
-		return keywords.indexOf(",") == -1 ? new String[]{keywords} : keywords.split(",");
+		return keywords.trim().indexOf(" ") == -1 ? new String[]{keywords} : keywords.split(" ");
 	}
 	
 	public boolean isHighLight() {
@@ -66,7 +85,7 @@ public class SearchParams {
 	}
 
 	public int getRowNumPerPage() {
-		return rowNumPerPage;
+		return null == rowNumPerPage ? 10 : rowNumPerPage;
 	}
 
 }

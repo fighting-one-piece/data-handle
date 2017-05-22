@@ -89,10 +89,11 @@ public class QQGraphServiceImpl implements IQQGraphService {
 					}
 				}
 			}
+			graph.tx().commit();
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
+			insertQQNodes(nodes);
 		}
-		graph.tx().commit();
 	}
 	
 	@Override
@@ -133,10 +134,10 @@ public class QQGraphServiceImpl implements IQQGraphService {
 					}
 				}
 			}
+			graph.tx().commit();
 		}catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 		}
-		graph.tx().commit();
 	}
 	
 	@Override
@@ -150,52 +151,56 @@ public class QQGraphServiceImpl implements IQQGraphService {
 	public void insertQQQunRelations(List<String> nodes) throws BusinessException {
 		if (null == nodes || nodes.size() == 0) return;
 		TitanGraph graph = TitanUtils.getInstance().getGraph();
-		for (int i = 0, len = nodes.size(); i < len; i++) {
-			Map<String, Object> node = GsonUtils.fromJsonToMap(nodes.get(i));
-			String qqNum = String.valueOf(node.get(QQ_NUM));
-			String qunNum = String.valueOf(node.get(QUN_NUM));
-			GraphTraversal<Vertex, Vertex> gt1 = graph.traversal().V().has(QQ_NUM, qqNum);
-			Vertex qqVertex = null;
-			if (gt1.hasNext()) {
-				qqVertex = gt1.next();
-			} else {
-				qqVertex = graph.addVertex(NODE_QQ);
-				qqVertex.property(QQ_NUM, qqNum);
+		try {
+			for (int i = 0, len = nodes.size(); i < len; i++) {
+				Map<String, Object> node = GsonUtils.fromJsonToMap(nodes.get(i));
+				String qqNum = String.valueOf(node.get(QQ_NUM));
+				String qunNum = String.valueOf(node.get(QUN_NUM));
+				GraphTraversal<Vertex, Vertex> gt1 = graph.traversal().V().has(QQ_NUM, qqNum);
+				Vertex qqVertex = null;
+				if (gt1.hasNext()) {
+					qqVertex = gt1.next();
+				} else {
+					qqVertex = graph.addVertex(NODE_QQ);
+					qqVertex.property(QQ_NUM, qqNum);
+				}
+				GraphTraversal<Vertex, Vertex> gt2 = graph.traversal().V().has(QUN_NUM, qunNum);
+				Vertex qunVertex = null;
+				if (gt2.hasNext()) {
+					qunVertex = gt2.next();
+				} else {
+					qunVertex = graph.addVertex(NODE_QUN);
+					qunVertex.property(QUN_NUM, qunNum);
+				}
+				Edge includingEdge = qunVertex.addEdge("including", qqVertex);
+				Edge includedEdge = qqVertex.addEdge("included", qunVertex);
+				includingEdge.properties(QQ_NUM, qqNum);
+				includedEdge.properties(QUN_NUM, qunNum);
+				Object genderObj = node.get(QQ_GENDER);
+				if (null != genderObj) {
+					includingEdge.property(QQ_GENDER, genderObj);
+					includedEdge.property(QQ_GENDER, genderObj);
+				}
+				Object ageObj = node.get(QQ_AGE);
+				if (null != ageObj) {
+					includingEdge.property(QQ_AGE, ageObj);
+					includedEdge.property(QQ_AGE, ageObj);
+				}
+				Object authObj = node.get(QQ_AUTH);
+				if (null != authObj) {
+					includingEdge.property(QQ_AUTH, authObj);
+					includedEdge.property(QQ_AUTH, authObj);
+				}
+				Object nicknameObj = node.get(QQ_NICKNAME);
+				if (null != nicknameObj) {
+					includingEdge.property(QQ_NICKNAME, nicknameObj);
+					includedEdge.property(QQ_NICKNAME, nicknameObj);
+				}
 			}
-			GraphTraversal<Vertex, Vertex> gt2 = graph.traversal().V().has(QUN_NUM, qunNum);
-			Vertex qunVertex = null;
-			if (gt2.hasNext()) {
-				qunVertex = gt2.next();
-			} else {
-				qunVertex = graph.addVertex(NODE_QUN);
-				qunVertex.property(QUN_NUM, qunNum);
-			}
-			Edge includingEdge = qunVertex.addEdge("including", qqVertex);
-			Edge includedEdge = qqVertex.addEdge("included", qunVertex);
-			includingEdge.properties(QQ_NUM, qqNum);
-			includedEdge.properties(QUN_NUM, qunNum);
-			Object genderObj = node.get(QQ_GENDER);
-			if (null != genderObj) {
-				includingEdge.property(QQ_GENDER, genderObj);
-				includedEdge.property(QQ_GENDER, genderObj);
-			}
-			Object ageObj = node.get(QQ_AGE);
-			if (null != ageObj) {
-				includingEdge.property(QQ_AGE, ageObj);
-				includedEdge.property(QQ_AGE, ageObj);
-			}
-			Object authObj = node.get(QQ_AUTH);
-			if (null != authObj) {
-				includingEdge.property(QQ_AUTH, authObj);
-				includedEdge.property(QQ_AUTH, authObj);
-			}
-			Object nicknameObj = node.get(QQ_NICKNAME);
-			if (null != nicknameObj) {
-				includingEdge.property(QQ_NICKNAME, nicknameObj);
-				includedEdge.property(QQ_NICKNAME, nicknameObj);
-			}
+			graph.tx().commit();
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
 		}
-		graph.tx().commit();
 	}
 	
 	@Override

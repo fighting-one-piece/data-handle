@@ -3,7 +3,9 @@ package org.cisiondata.modules.hbase;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -27,6 +29,7 @@ import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.hbase.filter.FirstKeyOnlyFilter;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.cisiondata.utils.serde.SerializerUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,11 +53,11 @@ public class HBaseUtils {
 		System.setProperty("HADOOP_MAPRED_HOME", "F:/develop/hadoop/hadoop-2.7.2");
 		configuration = new Configuration();
 		/** 与hbase/conf/hbase-site.xml中hbase.master配置的值相同 */
-		configuration.set("hbase.master", "192.168.0.115:60000");
-//		configuration.set("hbase.master", "192.168.0.15:60000");
+//		configuration.set("hbase.master", "192.168.0.115:60000");
+		configuration.set("hbase.master", "192.168.0.15:60000");
 		/** 与hbase/conf/hbase-site.xml中hbase.zookeeper.quorum配置的值相同 */
-		configuration.set("hbase.zookeeper.quorum", "192.168.0.115");
-//		configuration.set("hbase.zookeeper.quorum", "192.168.0.15,192.168.0.16,192.168.0.17");
+//		configuration.set("hbase.zookeeper.quorum", "192.168.0.115");
+		configuration.set("hbase.zookeeper.quorum", "192.168.0.15,192.168.0.16,192.168.0.17");
 		/** 与hbase/conf/hbase-site.xml中hbase.zookeeper.property.clientPort配置的值相同 */
 		configuration.set("hbase.zookeeper.property.clientPort", "2181");
 		//configuration = HBaseConfiguration.create(configuration);
@@ -120,11 +123,11 @@ public class HBaseUtils {
 	}
 
 	/** 插入一行记录*/
-	public static void insertRecord(String tableName, String rowKey, String family, String qualifier, String value) {
+	public static void insertRecord(String tableName, String rowKey, String family, String qualifier, Object value) {
 		try {
 			HTable table = (HTable) connection.getTable(TableName.valueOf(tableName));
 			Put put = new Put(Bytes.toBytes(rowKey));
-			put.addColumn(Bytes.toBytes(family), Bytes.toBytes(qualifier), Bytes.toBytes(value));
+			put.addColumn(Bytes.toBytes(family), Bytes.toBytes(qualifier), SerializerUtils.write(value));
 			table.put(put);
 			LOG.info("insert recored " + rowKey + " to table " + tableName + " success.");
 		} catch (IOException e) {
@@ -191,9 +194,18 @@ public class HBaseUtils {
 	public static Result getRecord(String tableName, String rowKey) {
 		try {
 			HTable table = (HTable) connection.getTable(TableName.valueOf(tableName));
-			Get get = new Get(rowKey.getBytes());
-			get.setMaxVersions();
-			return table.get(get);
+			return table.get(new Get(rowKey.getBytes()).setMaxVersions());
+		} catch (IOException e) {
+			LOG.error(e.getMessage(), e);
+		}
+		return null;
+	}
+	
+	/** 查找一条记录*/
+	public static Result getRecord(String tableName, String rowKey, String family) {
+		try {
+			HTable table = (HTable) connection.getTable(TableName.valueOf(tableName));
+			return table.get(new Get(rowKey.getBytes()).addFamily(Bytes.toBytes(family)).setMaxVersions());
 		} catch (IOException e) {
 			LOG.error(e.getMessage(), e);
 		}
@@ -206,9 +218,22 @@ public class HBaseUtils {
 			HTable table = (HTable) connection.getTable(TableName.valueOf(tableName));
 			List<Get> gets = new ArrayList<Get>();
 			for (int i = 0, len = rowKeys.size(); i < len; i++) {
-				Get get = new Get(rowKeys.get(i).getBytes());
-				get.setMaxVersions();
-				gets.add(get);
+				gets.add(new Get(rowKeys.get(i).getBytes()).setMaxVersions());
+			}
+			return table.get(gets);
+		} catch (IOException e) {
+			LOG.error(e.getMessage(), e);
+		}
+		return null;
+	}
+	
+	/** 查找多条记录*/
+	public static Result[] getRecords(String tableName, List<String> rowKeys, String family) {
+		try {
+			HTable table = (HTable) connection.getTable(TableName.valueOf(tableName));
+			List<Get> gets = new ArrayList<Get>();
+			for (int i = 0, len = rowKeys.size(); i < len; i++) {
+				gets.add(new Get(rowKeys.get(i).getBytes()).addFamily(Bytes.toBytes(family)).setMaxVersions());
 			}
 			return table.get(gets);
 		} catch (IOException e) {
@@ -267,14 +292,33 @@ public class HBaseUtils {
 		return null;
 	}
 	
+	public static Map<String, Object> resultToMap(Result result) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		try {
+			List<Cell> cells = result.listCells();
+			if (null == cells || cells.isEmpty()) return map;
+			for (int i = 0, len = cells.size(); i < len; i++) {
+				Cell cell = cells.get(i);
+				String qualifier = new String(CellUtil.cloneQualifier(cell), "UTF-8");
+				Object value = SerializerUtils.read(CellUtil.cloneValue(cell));
+				map.put(qualifier, value);
+			}
+		} catch (UnsupportedEncodingException e) {
+			LOG.error(e.getMessage(), e);
+		}
+		return map;
+	}
+	
 	public static void printRecord(Result result) {
 		try {
-			List<Cell> cells= result.listCells();
-			for (Cell cell : cells) {
+			List<Cell> cells = result.listCells();
+			if (null == cells || cells.isEmpty()) return;
+			for (int i = 0, len = cells.size(); i < len; i++) {
+				Cell cell = cells.get(i);
 				String row = new String(result.getRow(), "UTF-8");
 				String family = new String(CellUtil.cloneFamily(cell), "UTF-8");
 				String qualifier = new String(CellUtil.cloneQualifier(cell), "UTF-8");
-				String value = new String(CellUtil.cloneValue(cell), "UTF-8");
+				Object value = SerializerUtils.read(CellUtil.cloneValue(cell));
 				System.out.println("[row:"+row+"],[family:"+family+"],[qualifier:"+qualifier+"],[value:"+value+"]");
 			} 
 		} catch (UnsupportedEncodingException e) {
@@ -289,7 +333,8 @@ public class HBaseUtils {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		HBaseUtils.printRecords(HBaseUtils.getRecords("user"));
+//		HBaseUtils.printRecords(HBaseUtils.getRecords("student"));
+		printRecord(getRecord("student", "ffcea9959fe984d8089adce4d64d2cb8", "i"));
 	}
 
 }

@@ -57,7 +57,6 @@ import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms.Bucket;
 import org.elasticsearch.search.aggregations.metrics.avg.Avg;
 import org.elasticsearch.search.aggregations.metrics.sum.Sum;
-import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -545,19 +544,23 @@ public class Elastic5ClientHelper {
 	
 	public static void test01() {
 		Client client = Elastic5Client.getInstance().getClient();
-		SearchRequestBuilder searchRequestBuilder = client.prepareSearch("financial").setTypes("logistics");
-		BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-		boolQueryBuilder.must(QueryBuilders.matchPhraseQuery("city", "成都"));
-		boolQueryBuilder.must(QueryBuilders.matchPhraseQuery("orderTime", "2015/1"));
+		SearchRequestBuilder searchRequestBuilder = client.prepareSearch("resume-v1").setTypes("resume");
+//		BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+//		boolQueryBuilder.must(QueryBuilders.matchPhraseQuery("city", "成都"));
+//		boolQueryBuilder.must(QueryBuilders.matchPhraseQuery("orderTime", "2015/1"));
 //		boolQueryBuilder.should(QueryBuilders.matchPhraseQuery("orderTime", "2015-1"));
-		boolQueryBuilder.must(QueryBuilders.matchPhraseQuery("endTime", "2015/1"));
+//		boolQueryBuilder.must(QueryBuilders.matchPhraseQuery("endTime", "2015/1"));
 //		boolQueryBuilder.should(QueryBuilders.matchPhraseQuery("endTime", "2015-1"));
 //		boolQueryBuilder.should(QueryBuilders.matchPhraseQuery("sourceFile", "台湾"));
-		searchRequestBuilder.setQuery(boolQueryBuilder);
+//		searchRequestBuilder.setQuery(boolQueryBuilder);
+//		searchRequestBuilder.setQuery(QueryBuilders.termQuery("i1", "18669997921"));
+		searchRequestBuilder.setQuery(QueryBuilders.termQuery("﻿i1", "18669997921"));
+//		searchRequestBuilder.setQuery(QueryBuilders.termQuery("i42", "440113001205199994880"));
 		searchRequestBuilder.setSearchType(SearchType.DFS_QUERY_THEN_FETCH);
-		searchRequestBuilder.setSize(1000).setExplain(false);
-		searchRequestBuilder.addSort("updateTime", SortOrder.DESC);
+		searchRequestBuilder.setSize(100).setExplain(false);
+//		searchRequestBuilder.addSort("updateTime", SortOrder.DESC);
 		SearchResponse response = searchRequestBuilder.execute().actionGet();
+		System.out.println("totalHits: " + response.getHits().getTotalHits());
 		SearchHit[] hits = response.getHits().getHits();
 		for (int i = 0, len = hits.length; i < len; i++) {
 			System.out.println(hits[i].getSource());
@@ -632,7 +635,8 @@ public class Elastic5ClientHelper {
 	
 	public static void main(String[] args) {
 //		createIndex("logistics", 10, 1);
-		createIndexType("logistics-v1", "logistics", "logistics-v1_logistics.json");
+//		createIndexType("logistics-v1", "logistics", "logistics-v1_logistics.json");
+		test01();
 	}
 
 }

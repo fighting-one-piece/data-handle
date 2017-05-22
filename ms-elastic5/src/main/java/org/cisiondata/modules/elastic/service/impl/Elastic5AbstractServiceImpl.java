@@ -31,6 +31,16 @@ public class Elastic5AbstractServiceImpl {
 	protected static Set<String> indices = null;
 	/** ES TYPE */
 	protected static Set<String> types = null;
+	/** ES ATTRIBUTES I */
+	protected static Set<String> i_attributes = null;
+	/** ES ATTRIBUTES N */
+	protected static Set<String> n_attributes = null;
+	/** ES ATTRIBUTES A */
+	protected static Set<String> a_attributes = null;
+	/** ES ATTRIBUTES D */
+	protected static Set<String> d_attributes = null;
+	/** ES ATTRIBUTES O */
+	protected static Set<String> o_attributes = null;
 	
 	/** ES INDEX TYPE 映射关系*/
 	protected static Map<String, String> index_type_mapping = null;
@@ -53,14 +63,19 @@ public class Elastic5AbstractServiceImpl {
 	}
 	
 	private void initAttributeCache() {
+		indices = new HashSet<String>();
+		types = new HashSet<String>();
+		i_attributes = new HashSet<String>();
+		n_attributes = new HashSet<String>();
+		a_attributes = new HashSet<String>();
+		d_attributes = new HashSet<String>();
+		o_attributes = new HashSet<String>();
 		index_type_mapping = new HashMap<String, String>();
 		type_attributes_mapping = new HashMap<String, Set<String>>();
 	}
 	
 	@SuppressWarnings("unchecked")
 	private void initESIndicesTypesAttributesCache() {
-		indices = new HashSet<String>();
-		types = new HashSet<String>();
 		try {
 			IndicesAdminClient indicesAdminClient = Elastic5Client.getInstance().getClient().admin().indices();
 			GetMappingsResponse getMappingsResponse = indicesAdminClient.getMappings(new GetMappingsRequest()).get();
@@ -88,6 +103,17 @@ public class Elastic5AbstractServiceImpl {
 						Set<String> attributes = new HashSet<String>();
 						for (String attribute : properties.keySet()) {
 							attributes.add(attribute);
+							if (attribute.startsWith("i")) {
+								i_attributes.add(attribute);
+							} else if (attribute.startsWith("n")) {
+								n_attributes.add(attribute);
+							} else if (attribute.startsWith("a")) {
+								a_attributes.add(attribute);
+							} else if (attribute.startsWith("d")) {
+								d_attributes.add(attribute);
+							} else if (attribute.startsWith("o")) {
+								o_attributes.add(attribute);
+							}
 						}
 						type_attributes_mapping.put(type, attributes);
 					}
