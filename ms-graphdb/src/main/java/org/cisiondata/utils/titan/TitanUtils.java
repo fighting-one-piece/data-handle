@@ -25,18 +25,19 @@ public class TitanUtils {
 	private void loadTitanGraph() {
 		Builder builder = TitanFactory.build();
 		builder.set("storage.backend", "hbase");
-        builder.set("storage.hostname", "host-15");
-        builder.set("storage.tablename", "titan");
+        builder.set("storage.hostname", "host-10,host-11,host-12,host-13,host-14");
+        builder.set("storage.tablename", "qqgraph");
         builder.set("index.search.backend", "elasticsearch");
-        builder.set("index.search.hostname", "host-15");
+        builder.set("index.search.hostname", "host-10,host-11,host-12,host-13,host-14");
         builder.set("index.search.port", "19030");
         builder.set("index.search.elasticsearch.interface", "TRANSPORT_CLIENT");
         builder.set("index.search.elasticsearch.cluster-name", "cisiondata-graphdb");
-        builder.set("index.search.elasticsearch.index-name", "titan");
+        builder.set("index.search.elasticsearch.index-name", "qqgraph");
 //      builder.set("index.search.directory", "/tmp/titan" + File.separator + "es");  
         builder.set("index.search.elasticsearch.local-mode", false);  
         builder.set("index.search.elasticsearch.client-only", "true");
-        builder.set("root.graph.set-vertex-id", "true");
+        builder.set("root.graph.set-vertex-id", true);
+        builder.set("root.cache.db-cache", true);
         this.graph = builder.open();
         /**
         this.graph.configuration().setProperty(GraphDatabaseConfiguration.ALLOW_SETTING_VERTEX_ID.toString(), true);

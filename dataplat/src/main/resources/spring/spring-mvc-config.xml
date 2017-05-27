@@ -98,6 +98,8 @@
     	</property>  	
 	</bean>
 	
+	
+	
 	<!-- 内容协商管理器  -->
     <!--1、首先检查路径扩展名（如my.pdf）；2、其次检查Parameter（如my?format=pdf）；3、检查Accept Header-->
     <bean id="contentNegotiationManager" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
@@ -145,13 +147,39 @@
 	</bean>
 	-->
 	
+	<bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">  
+        <property name="templateLoaderPath" value="/WEB-INF/view/fm" />  
+        <property name="freemarkerSettings">  
+            <props>  
+                <prop key="template_update_delay">0</prop>  
+                <prop key="default_encoding">UTF-8</prop>  
+                <prop key="number_format">0.##########</prop>  
+                <prop key="datetime_format">yyyy-MM-dd HH:mm:ss</prop>  
+                <prop key="classic_compatible">true</prop>  
+                <prop key="template_exception_handler">ignore</prop>  
+            </props>  
+        </property>  
+    </bean>  
+	
+	<!-- 针对freemarker的视图配置 -->  
+    <bean id="freemarkerViewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">  
+        <property name="cache" value="true" />  
+        <property name="prefix" value="" />  
+        <property name="suffix" value=".ftl" />  
+        <property name="contentType" value="text/html;charset=UTF-8"></property>  
+        <property name="requestContextAttribute" value="request" />  
+        <property name="exposeSpringMacroHelpers" value="true" />  
+        <property name="exposeRequestAttributes" value="true" />  
+        <property name="exposeSessionAttributes" value="true" />  
+    </bean>  
+	
 	<!-- 文件上传表单的视图解析器 -->  
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">    
         <property name="defaultEncoding" value="utf-8"/>  
         <property name="maxUploadSize" value="104857600" />    
     </bean> 
 
-	<!-- Mapping exception to the handler view -->
+	<!-- Mapping Exception to the handler view -->
 	<bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
 		<property name="warnLogCategory" value="WARN"></property>
         <property name="defaultStatusCode" value="500"></property>
@@ -192,9 +220,6 @@
         </bean>
     </mvc:interceptors>
     
-    <bean id="frontContextInterceptor" class="org.cisiondata.modules.auth.web.interceptor.FrontContextInterceptor"/>
-	<bean id="frontLocaleInterceptor" class="org.cisiondata.modules.auth.web.interceptor.FrontLocaleInterceptor"/>
-    
     <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
 		<property name="interceptors">
 			<list>
@@ -204,6 +229,12 @@
 		</property>
 	</bean>
 	-->
+
+	<mvc:resources mapping="/js/**" location="/WEB-INF/js/" />
+    <mvc:resources mapping="/css/**" location="/WEB-INF/css/" />
+    <mvc:resources mapping="/img/**" location="/WEB-INF/img/" />
+    <mvc:resources mapping="/images/**" location="/WEB-INF/images/" />
+	<mvc:resources mapping="/fonts/**" location="/WEB-INF/fonts/"/>
 	
     <mvc:default-servlet-handler/>
     

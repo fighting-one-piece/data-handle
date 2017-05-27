@@ -24,6 +24,7 @@ import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
+import org.junit.Test;
 
 public class QQRelationTest {
 	
@@ -115,14 +116,17 @@ public class QQRelationTest {
 		System.out.println("version: {}" + ur.getVersion());
 	}
 	
-	public static void t6() {
+	@Test
+	public void t6() {
+		long start = System.currentTimeMillis();
 		IQQGraphService qqRelationService = new QQGraphServiceImpl();
-		List<Map<String, Object>> qqNodes = qqRelationService.readQQNodeDataList("374767247");
+		List<Map<String, Object>> qqNodes = qqRelationService.readQQNodeDataList("1002754876");
 		qqNodes.forEach(qq -> System.out.println(qq));
+		System.out.println("spend time " + (System.currentTimeMillis() - start)/1000 + " s");
+		TitanUtils.getInstance().closeGraph();
 	}
 	
 	public static void main(String[] args) throws Exception {
-		t6();
 //		t4();
 		TitanUtils.getInstance().closeGraph();
 	}

@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 	    <artifactId>spring-boot-starter-parent</artifactId>
-	    <version>1.5.2.RELEASE</version>
+	    <version>1.5.3.RELEASE</version>
 	    <relativePath/>
 	</parent>
 
@@ -51,14 +51,14 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring.boot.starter>1.5.2.RELEASE</spring.boot.starter>
-		<spring.boot.starter.web>1.5.2.RELEASE</spring.boot.starter.web>
-		<spring.boot.starter.test>1.5.2.RELEASE</spring.boot.starter.test>
-		<spring.boot.starter.jdbc>1.5.2.RELEASE</spring.boot.starter.jdbc>
-		<spring.boot.starter.parent>1.5.2.RELEASE</spring.boot.starter.parent>
-		<spring.boot.starter.actuator>1.5.2.RELEASE</spring.boot.starter.actuator>
-		<spring.boot.starter.thymeleaf>1.5.2.RELEASE</spring.boot.starter.thymeleaf>
-		<spring.boot.configuration.processor>1.5.2.RELEASE</spring.boot.configuration.processor>
+		<spring.boot.starter>1.5.3.RELEASE</spring.boot.starter>
+		<spring.boot.starter.web>1.5.3.RELEASE</spring.boot.starter.web>
+		<spring.boot.starter.test>1.5.3.RELEASE</spring.boot.starter.test>
+		<spring.boot.starter.jdbc>1.5.3.RELEASE</spring.boot.starter.jdbc>
+		<spring.boot.starter.parent>1.5.3.RELEASE</spring.boot.starter.parent>
+		<spring.boot.starter.actuator>1.5.3.RELEASE</spring.boot.starter.actuator>
+		<spring.boot.starter.thymeleaf>1.5.3.RELEASE</spring.boot.starter.thymeleaf>
+		<spring.boot.configuration.processor>1.5.3.RELEASE</spring.boot.configuration.processor>
 		<hadoop.version>2.7.2</hadoop.version>
 		<hbase.version>1.2.3</hbase.version>
 		<titan.version>1.0.0</titan.version>
@@ -89,6 +89,7 @@
 		<dependency>
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-starter-test</artifactId>
+		    <scope>test</scope>
 		</dependency>
 		
 		<dependency>

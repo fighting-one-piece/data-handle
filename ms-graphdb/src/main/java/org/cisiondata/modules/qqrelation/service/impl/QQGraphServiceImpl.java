@@ -206,19 +206,25 @@ public class QQGraphServiceImpl implements IQQGraphService {
 	@Override
 	public List<Map<String, Object>> readQQNodeDataList(String qqNum) throws BusinessException {
 		List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
+		long start = System.currentTimeMillis();
 		TitanGraph graph = TitanUtils.getInstance().getGraph();
+		System.out.println("1:" + (System.currentTimeMillis()-start)/1000);
 		GraphTraversal<Vertex, Vertex> gt = graph.traversal().V().has(QQ_NUM, qqNum);
-        while (gt.hasNext()) {
+		System.out.println("2:" + (System.currentTimeMillis()-start)/1000);
+		while (gt.hasNext()) {
         	Map<String, Object> result = new HashMap<String, Object>();
 			Vertex vertex = gt.next();
+			System.out.println("3:" + (System.currentTimeMillis()-start)/1000);
 			Iterator<VertexProperty<Object>> vertexProperties = vertex.properties();
 			while (vertexProperties.hasNext()) {
 				VertexProperty<Object> vp = vertexProperties.next();
 				result.put(vp.key(), vp.value());
 			}
 			Iterator<Edge> edgeIterator = vertex.edges(Direction.OUT);
+			System.out.println("4:" + (System.currentTimeMillis()-start)/1000);
 			List<Map<String, Object>> qunResultList = new ArrayList<Map<String, Object>>();
 			while (edgeIterator.hasNext()) {
+				System.out.println("5:" + (System.currentTimeMillis()-start)/1000);
 				Map<String, Object> qunResult = new HashMap<String, Object>();
 				Edge edge = edgeIterator.next();
 				Iterator<Property<Object>> edgeProperties = edge.properties();

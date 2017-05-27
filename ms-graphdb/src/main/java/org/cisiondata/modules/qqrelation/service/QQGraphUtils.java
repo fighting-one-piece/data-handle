@@ -53,7 +53,7 @@ public class QQGraphUtils {
 	
 	public void buildSchema(TitanGraph graph) {
 		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "uid", String.class);
-		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "i1", String.class);
+		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "i4", String.class);
 		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "i9", String.class);
 		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "c1", String.class);
 		TitanUtils.getInstance().buildMixedIndexForVertexProperty("qqnode", "a26", String.class);

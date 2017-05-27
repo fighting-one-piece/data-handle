@@ -8,14 +8,15 @@
 		<dependencySet>
 			<unpack>true</unpack>
 			<scope>runtime</scope>
-			<!--
+			<!-- 当前项目构件是否包含在这个依赖集合里 -->
+			<useProjectArtifact>true</useProjectArtifact>
 			<excludes>
-				<exclude>org.apache.hadoop:*</exclude>
+				<exclude>org.elasticsearch.spark:*</exclude>
 			</excludes>
-			-->
 			<!-- very small jar -->
 			<includes>
 				<include>org.platform:*</include>
+				<include>org.elasticsearch:*</include>
 			</includes>
 		</dependencySet>
 	</dependencySets>

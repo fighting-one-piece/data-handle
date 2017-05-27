@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.cisiondata.modules.address.service.impl.AddressServiceImpl;
 import org.cisiondata.utils.file.DefaultLineHandler;
@@ -61,8 +62,44 @@ public class AdministrativeDivisionSpeedTest {
 		return null == data ? new ArrayList<String>() : GsonUtils.builder().fromJson((String) data, List.class);
 	}
 	
+	public static void a() {
+		List<String> lines1 = FileUtils.readFromClasspath("dictionary/administrative_division_2.dic", new DefaultLineHandler());
+		Map<String, String> map1 = new HashMap<String, String>();
+		for (int i = 0, len = lines1.size(); i < len; i++) {
+			if (i % 2 != 0) map1.put(lines1.get(i), lines1.get(i - 1));
+		}
+		List<String> lines2 = FileUtils.readFromClasspath("dictionary/administrative_division_2_n.dic", new DefaultLineHandler());
+		Map<String, String> map2 = new HashMap<String, String>();
+		for (int i = 0, len = lines2.size(); i < len; i++) {
+			if (i % 2 != 0) map2.put(lines2.get(i), lines2.get(i - 1));
+		}
+		Set<String> keys = map1.keySet();
+		List<String> lines = new ArrayList<String>();
+		for (Map.Entry<String, String> entry : map2.entrySet()) {
+			if (!keys.contains(entry.getKey())) {
+				lines.add(entry.getValue());
+				lines.add(entry.getKey());
+			}
+		}
+		FileUtils.write("F://a.txt", lines);
+	}
+	
+	public static void b() {
+		List<String> lines1 = FileUtils.readFromClasspath("dictionary/administrative_division_1_2.dic", new DefaultLineHandler());
+		List<String> lines2 = FileUtils.readFromClasspath("dictionary/administrative_division_1_2_n.dic", new DefaultLineHandler());
+		List<String> lines = new ArrayList<String>();
+		for (int i = 0, len = lines2.size(); i < len; i++) {
+			String line = lines2.get(i);
+			if (!lines1.contains(line)) {
+				lines.add(line);
+			}
+		}
+		FileUtils.write("F://a.txt", lines);
+	}
+	
 	public static void main(String[] args) {
-		speed01();
+		b();
+//		speed01();
 //		System.out.println(extract3ADFromAddress("澄迈"));
 	}
 	

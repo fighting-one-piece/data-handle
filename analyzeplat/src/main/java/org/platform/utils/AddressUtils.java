@@ -14,7 +14,7 @@ public class AddressUtils {
 	public static List<String> extractADFromAddress(String address) {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("address", address);
-		String json = HttpClientUtils.get("http://192.168.0.114:18080/ads", params, "UTF-8");
+		String json = HttpClientUtils.get("http://192.168.0.115:18000/ads", params, "UTF-8");
 		Map<String, Object> map = GsonUtils.fromJsonToMap(json);
 		Object data = map.get("data");
 		return null == data ? new ArrayList<String>() : GsonUtils.builder().fromJson((String) data, List.class);
@@ -24,7 +24,7 @@ public class AddressUtils {
 	public static List<String> extract3ADFromAddress(String address) {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("address", address);
-		String json = HttpClientUtils.get("http://192.168.0.114:18080/3/ads", params, "UTF-8");
+		String json = HttpClientUtils.get("http://192.168.0.115:18000/3/ads", params, "UTF-8");
 		Map<String, Object> map = GsonUtils.fromJsonToMap(json);
 		Object data = map.get("data");
 		return null == data ? new ArrayList<String>() : GsonUtils.builder().fromJson((String) data, List.class);
@@ -34,7 +34,7 @@ public class AddressUtils {
 	public static List<String> extract5ADFromAddress(String address) {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("address", address);
-		String json = HttpClientUtils.get("http://192.168.0.114:18080/5/ads", params, "UTF-8");
+		String json = HttpClientUtils.get("http://192.168.0.115:18000/5/ads", params, "UTF-8");
 		Map<String, Object> map = GsonUtils.fromJsonToMap(json);
 		Object data = map.get("data");
 		return null == data ? new ArrayList<String>() : GsonUtils.builder().fromJson((String) data, List.class);

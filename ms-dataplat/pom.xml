@@ -210,24 +210,11 @@
 			<version>${jedis.version}</version>
 		</dependency>
 		
-		<!-- 拼音标注 -->
+		<!-- MS-Tokenizer依赖包 -->
 		<dependency>
-			<groupId>com.belerweb</groupId>
-			<artifactId>pinyin4j</artifactId>
-			<version>${pinyin4j.version}</version>
-		</dependency>
-        
-        <!-- Elastic Search依赖包 -->
-		<dependency>
-			<groupId>org.elasticsearch</groupId>
-			<artifactId>elasticsearch</artifactId>
-			<version>${elasticsearch.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>com.google.guava</groupId>
-					<artifactId>guava</artifactId>
-				</exclusion>
-			</exclusions>
+			<groupId>org.cisiondata</groupId>
+			<artifactId>ms-tokenizer</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
         <!-- Swagger2依赖包 -->
