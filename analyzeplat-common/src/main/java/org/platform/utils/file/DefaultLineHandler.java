@@ -1,15 +1,14 @@
 package org.platform.utils.file;
 
-public class DefaultLineHandler implements LineHandler {
+public class DefaultLineHandler implements LineHandler<String> {
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public String handle(String line) {
 		return line;
 	}
 
 	@Override
-	public boolean filter(String line) {
+	public boolean filter(String t) {
 		return false;
 	}
 
