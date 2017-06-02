@@ -1,9 +1,8 @@
 package org.cisiondata.modules.consumer.feign;
 
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@Component
+//@Component("feignConsumerClientHystrix")
 public class FeignConsumerClientHystrix implements FeignConsumerClient {
 
 	@Override
@@ -11,5 +10,9 @@ public class FeignConsumerClientHystrix implements FeignConsumerClient {
 		return -1;
 	}
 
+	@Override
+	public int minus(@RequestParam(value = "a") int a, @RequestParam(value = "b") int b) {
+		return -1;
+	}
 	
 }
