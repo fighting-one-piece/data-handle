@@ -1,2 +1,2 @@
 # repository-dataplat
-Data Project
+data project platform
