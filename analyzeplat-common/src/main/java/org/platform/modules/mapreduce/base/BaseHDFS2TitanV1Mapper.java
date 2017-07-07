@@ -34,7 +34,7 @@ public abstract class BaseHDFS2TitanV1Mapper extends Mapper<LongWritable, Text, 
 		super.setup(context);
 		this.topic = (String) context.getConfiguration().get("topic");
 		Properties properties = new Properties();  
-        properties.put("bootstrap.servers", "192.168.0.15:9092,192.168.0.16:9092,192.168.0.17:9092");  
+        properties.put("bootstrap.servers", "172.20.100.15:9092,172.20.100.16:9092,172.20.100.17:9092");  
         properties.put("producer.type", "sync");  
         properties.put("compression.codec", "1");
         properties.put("request.required.acks", "1");  

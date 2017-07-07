@@ -19,8 +19,9 @@ public abstract class BaseHDFS2HDFSJob extends BaseJob {
 	public abstract Class<? extends BaseHDFS2HDFSMapper> getMapperClass();
 	
 	/**
-	 * 参数1：HDFS输入路径
-	 * 参数2：HDFS输出路径
+	 * 参数1：HDFS文件表头
+	 * 参数2：HDFS输入路径
+	 * 参数3：HDFS输出路径
 	 */
 	@Override
 	public int run(String[] args) throws Exception {

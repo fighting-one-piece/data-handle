@@ -26,13 +26,15 @@ public abstract class BaseHDFS2ES5V1Mapper extends Mapper<LongWritable, Text, Te
 	
 	private String esType = null;
 	
+	private String topic = null;
+	
 	private KafkaProducer<String, String> producer = null;
 	
 	private static final int BATCH = 1200;
 
 	private static final int PARTITION_NUM = 12;
 
-	private static final String TOPIC = "elastic5";
+	private static final String DEFAULT_TOPIC = "elastic5";
 	
 	private long totalLines = 0L;
 	
@@ -45,8 +47,9 @@ public abstract class BaseHDFS2ES5V1Mapper extends Mapper<LongWritable, Text, Te
 				.setDateFormat("yyyy-MM-dd HH:mm:ss").create();
 		this.esIndex = (String) context.getConfiguration().get("esIndex");
 		this.esType = (String) context.getConfiguration().get("esType");
+		this.topic = (String) context.getConfiguration().get("topic", DEFAULT_TOPIC);
 		Properties properties = new Properties();  
-        properties.put("bootstrap.servers", "192.168.0.15:9092,192.168.0.16:9092,192.168.0.17:9092");  
+        properties.put("bootstrap.servers", "172.20.100.15:9092,172.20.100.16:9092,172.20.100.17:9092");  
         properties.put("producer.type", "sync");  
         properties.put("compression.codec", "1");
         properties.put("request.required.acks", "1");  
@@ -92,7 +95,7 @@ public abstract class BaseHDFS2ES5V1Mapper extends Mapper<LongWritable, Text, Te
 	private void sendMessages(Map<String, String> messages) {
 		int index = 0;
 		for (Map.Entry<String, String> entry : messages.entrySet()) {
-			producer.send(new ProducerRecord<String, String>(TOPIC, 
+			producer.send(new ProducerRecord<String, String>(this.topic, 
 					index % PARTITION_NUM, entry.getKey(), entry.getValue()));
 			index++;
 		}

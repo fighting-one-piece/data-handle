@@ -67,9 +67,11 @@ public abstract class BaseHDFS2HDFSMapper extends Mapper<LongWritable, Text, Nul
 			Map<String, Object> incorrect = new HashMap<String, Object>();
 			handle(original, correct, incorrect);
 			if (!correct.isEmpty()) {
-				String id = IDGenerator.generateByMapValues(correct, 
-						"insertTime", "updateTime", "sourceFile", "inputPerson");
-				correct.put("_id", id);
+				if (!correct.containsKey("_id")) {
+					String id = IDGenerator.generateByMapValues(correct, 
+							"insertTime", "updateTime", "sourceFile", "inputPerson");
+					correct.put("_id", id);
+				}
 				multipleOutputs.write(NullWritable.get(), new Text(gson.toJson(correct)), "correct");
 			}
 			if (!incorrect.isEmpty()) {

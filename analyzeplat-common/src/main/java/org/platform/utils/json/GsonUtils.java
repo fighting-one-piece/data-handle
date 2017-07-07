@@ -19,7 +19,11 @@ public class GsonUtils {
 	private static Gson gson = null;
 	
 	static {
+		/** setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE)*/
+		/** .setPrettyPrinting() */
 		gson = new GsonBuilder()
+				.serializeNulls()
+				.enableComplexMapKeySerialization()
 				.serializeSpecialFloatingPointValues()
 				.setDateFormat("yyyy-MM-dd HH:mm:ss")
 				.registerTypeAdapter(new TypeToken<List<Object>>(){}.getType(), new ListDeserializer())

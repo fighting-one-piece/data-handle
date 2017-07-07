@@ -26,12 +26,13 @@ public abstract class BaseHDFS2ES5V1Job extends BaseJob {
 	public int run(String[] args) throws Exception {
 		Configuration conf = newConfiguration();
 		String[] oArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
-		if (oArgs.length < 4) {
-			LOG.error("error! need four parameters at least!");
+		if (oArgs.length < 5) {
+			LOG.error("error! need five parameters at least!");
 			System.exit(2);
 		}
 		conf.set("esIndex", oArgs[0]);
 		conf.set("esType", oArgs[1]); 
+		conf.set("topic", oArgs[2]); 
 		Job job = Job.getInstance(conf, getJobName());
 		job.setJarByClass(getClass());
 		job.setMapperClass(getMapperClass());
@@ -46,7 +47,7 @@ public abstract class BaseHDFS2ES5V1Job extends BaseJob {
 		job.setOutputFormatClass(TextOutputFormat.class);
 		
 		StringBuilder inputPaths = new StringBuilder();
-		for (int i = 2; i < oArgs.length - 1; i++) {
+		for (int i = 3; i < oArgs.length - 1; i++) {
 			inputPaths.append(oArgs[i]).append(",");
 		}
 		if (inputPaths.length() > 0) inputPaths.deleteCharAt(inputPaths.length() - 1);

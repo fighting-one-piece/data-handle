@@ -211,11 +211,11 @@ public class JobUtils {
 	}
 	
 	public static String getCurrentYarnHostAddress() {
-		String defaultHostAddress = "192.168.0.10";
+		String defaultHostAddress = "172.20.100.10";
 		try {
         	InetAddress inetAddress = InetAddress.getLocalHost();
             String hostAddress = inetAddress.getHostAddress();
-            if ("192.168.0.115".equals(hostAddress)) return hostAddress;
+            if ("172.20.100.10".equals(hostAddress)) return hostAddress;
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             return defaultHostAddress;
