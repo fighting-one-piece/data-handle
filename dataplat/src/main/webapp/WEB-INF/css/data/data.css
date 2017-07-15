@@ -1,0 +1,21 @@
+div div{
+	Float:left;
+}
+#dbName{
+	background-color: royalblue;
+	width: auto;
+	height: auto;
+	
+}
+#tableNames{
+	background-color: aqua;
+	width: auto;
+	height: auto;
+	margin-left: 10px;
+}
+#datas{
+	margin-left: 20px;
+	background-color: aquamarine;
+	width: auto;
+	height: auto;
+}

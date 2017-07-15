@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cisiondata.modules.module.dao.DbDAO">
+
+
+	<select id="readDbName" resultType="map">
+		show databases
+	</select>
+	<select id="readTablename" resultType="String">
+	select table_name from information_schema.tables where table_schema=#{dbName}
+	</select>
+	<select id="readTableColumns" resultType="String">
+	select column_name from information_schema.COLUMNS where table_name=#{tableName}
+	</select>
+	 <select id="readDatas" resultType="java.util.LinkedHashMap">
+	SELECT * from(SELECT @rownum:=@rownum+1 AS rownum, c.* FROM (SELECT @rownum:=0) r, ${tableName} c)a where a.rownum%${row}=0 limit 0,100; 
+	
+	</select> 
+</mapper>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cisiondata.modules.login.dao.UserDAO">
+
+	<resultMap type="org.cisiondata.modules.login.entity.User" id="userResultMap">
+		<id property="id" column="ID"/> 
+        <result property="account" column="ACCOUNT"/>
+        <result property="password" column="PASSWORD"/>  
+        <result property="deleteFlag" column="DELETE_FLAG"/>
+    </resultMap>
+    
+    <sql id="whereClause">
+    	<where>
+    		<if test="id != null">
+    			ID = #{id}
+    		</if>
+    		<if test="account != null and account != ''">
+    			AND ACCOUNT = #{account}
+    		</if>
+    		<if test="password != null and password != ''">
+    			AND PASSWORD = #{password}
+    		</if>
+    		<if test="directory != null and directory != ''">
+    			AND DIRECTORY = #{directory}
+    		</if>
+    		<if test="deleteFlag != null">
+    			AND DELETE_FLAG = #{deleteFlag}
+    		</if>
+    	</where>
+    </sql>
+    
+    <sql id="columnClause">
+    	ID,ACCOUNT, PASSWORD, DELETE_FLAG,DIRECTORY
+    </sql>
+    
+    <select id="readDataByCondition" resultMap="userResultMap">
+    	SELECT 
+        <include refid="columnClause"/>
+        FROM T_USER
+        <include refid="whereClause"/>
+    </select>
+    
+    <update id="update" parameterType="org.cisiondata.modules.login.entity.User">
+    	UPDATE T_USER
+    	<set>
+    		<if test="password != null and password != ''">
+    			PASSWORD = #{password},
+    		</if>
+    		<if test="deleteFlag != null">
+    			DELETE_FLAG = #{deleteFlag},
+    		</if>
+    		<if test="directory != null and directory != ''">
+    			DIRECTORY = #{directory}
+    		</if>
+    	</set>
+    	WHERE ACCOUNT=#{account}
+    </update>
+    
+</mapper>

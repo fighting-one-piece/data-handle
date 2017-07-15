@@ -1,0 +1,59 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>登陆</title>
+<script type="text/javascript" src="js/jquery-3.0.0.min.js"></script>
+<script type="text/javascript">
+	var pathName=window.document.location.pathname;
+	var projectName=pathName.substring(0,pathName.substr(1).indexOf('/')+1);
+	$(function(){
+		$("#login").click(function(){
+			$("#warning").html("");
+			var account = $("#account").val().trim();
+			var password = $("#password").val().trim();
+			if (account == ""){
+				$("#warning").html("账号不能为空");
+				return;
+			}
+			if (password == ""){
+				$("#warning").html("密码不能为空");
+				return;
+			}
+			$.ajax({
+				type:"post",
+				url:projectName+"/login",
+				contentType: "application/json",
+				data:JSON.stringify({"account":account,"password":password}),
+				dataType:"json",
+				success:function(result){
+					if (result.code == 1) {
+						sessionStorage.setItem("dataplat_accessToken", result.data);
+						window.location.href = projectName +"/upload";
+					} else {
+						$("#warning").html(result.failure)
+					}
+				},
+				error:function(){
+					console.log("ajax发送请求失败！");
+				}
+			});
+		})
+	})
+</script>
+</head>
+<body>
+<a id="anchor"></a>
+<h5 align="center">&nbsp;</h5>
+<div align="center">
+<h1>登陆界面</h1>
+   <!-- <input type="submit" value="数据导入" onclick="window.location.href='/upload'"/>
+   <input type="submit" value="查看库" onclick="window.location='index/toIndexPage'"/>
+   <input type="submit" value="json文件" onclick="window.location.href='mysql/getJsonList'"/> -->
+   <div id="warning"></div>
+   <input type="text" id="account" placeholder="请输入账号">
+   <input type="password" id="password" placeholder="请输入密码">
+   <input type="button" id="login" value="登陆">
+</div>
+</body>
+</html>  
+<!-- <script type="text/javascript">top.window.location="index/toIndexPage"</script> -->

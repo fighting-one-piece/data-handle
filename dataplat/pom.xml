@@ -16,6 +16,7 @@
 			<id>development</id>
 			<properties>
 				<target-env>development</target-env>
+				<repo-host>192.168.0.124:8081</repo-host>
 			</properties>
 			<activation>
 				<activeByDefault>true</activeByDefault>
@@ -26,6 +27,7 @@
 			<id>test</id>
 			<properties>
 				<target-env>test</target-env>
+				<repo-host>172.20.100.114:11111</repo-host>
 			</properties>
 		</profile>
 		<!-- 生产环境 -->
@@ -33,6 +35,7 @@
 			<id>production</id>
 			<properties>
 				<target-env>production</target-env>
+				<repo-host>172.20.100.114:11111</repo-host>
 			</properties>
 		</profile>
 	</profiles>
@@ -41,7 +44,7 @@
 		<repository>
 			<id>public</id>
 			<name>public repository</name>
-			<url>http://192.168.0.115:8081/nexus/content/groups/public/</url>
+			<url>http://${repo-host}/nexus/content/groups/public/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
@@ -55,7 +58,7 @@
 		<pluginRepository>
 			<id>public</id>
 			<name>public repository</name>
-			<url>http://192.168.0.115:8081/nexus/content/groups/public/</url>
+			<url>http://${repo-host}/nexus/content/groups/public/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
@@ -67,8 +70,9 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<jackson.version>2.7.3</jackson.version>
 		<logback.version>1.1.7</logback.version>
-		<jedis.version>2.5.1</jedis.version>
+		<swagger.version>2.6.1</swagger.version>
         <pinyin4j.version>2.5.0</pinyin4j.version>
 		<elasticsearch.version>2.4.1</elasticsearch.version>
 	</properties>
@@ -81,10 +85,36 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-websocket</artifactId>
+		    <version>4.3.6.RELEASE</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-messaging</artifactId>
+		    <version>4.3.6.RELEASE</version>
+		</dependency>
+		
 		<!--DevPlat MyBatis依赖包 -->
 		<dependency>
 			<groupId>org.cisiondata</groupId>
 			<artifactId>devplat-mybatis</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		
+		<!--DevPlat Redis依赖包 -->
+		<dependency>
+			<groupId>org.cisiondata</groupId>
+			<artifactId>devplat-redis</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		
+		<!--DevPlat RabbitMQ依赖包 -->
+		<dependency>
+			<groupId>org.cisiondata</groupId>
+			<artifactId>devplat-rabbitmq</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		
@@ -95,7 +125,7 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		
-		<!--  -->
+		<!-- JDKTools依赖包 -->
 		<dependency>  
 	        <groupId>jdk.tools</groupId>  
 	        <artifactId>jdk.tools</artifactId>  
@@ -113,11 +143,35 @@
 		</dependency>
 		
 		<!-- Servlet依赖包 -->
+		<!--  
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
-			<version>2.4</version>
+			<version>3.0.1</version>
 			<scope>provided</scope>
+		</dependency>
+		-->
+		
+		<dependency>
+		    <groupId>javax.servlet</groupId>
+		    <artifactId>javax.servlet-api</artifactId>
+		    <version>3.1.0</version>
+		    <scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+		    <groupId>javax.websocket</groupId>
+		    <artifactId>javax.websocket-api</artifactId>
+		    <version>1.1</version>
+		    <scope>provided</scope>
+		</dependency>
+		
+		
+		<!-- JSTL依赖包 -->
+		<dependency>
+		    <groupId>jstl</groupId>
+		    <artifactId>jstl</artifactId>
+		    <version>1.2</version>
 		</dependency>
 		
 		<!--Logback依赖包 -->
@@ -143,6 +197,19 @@
 			<groupId>org.logback-extensions</groupId>
 			<artifactId>logback-ext-spring</artifactId>
 			<version>0.1.4</version>
+		</dependency>
+		
+		<!-- Jackon依赖包 -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
 		</dependency>
 		
 		<!-- Guava依赖包 -->
@@ -171,6 +238,20 @@
 		    <artifactId>freemarker</artifactId>
 		    <version>2.3.23</version>
 		</dependency>
+		
+		<!-- Swagger依赖包 -->
+		<dependency>
+		    <groupId>io.springfox</groupId>
+		    <artifactId>springfox-swagger2</artifactId>
+		    <version>${swagger.version}</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>io.springfox</groupId>
+		    <artifactId>springfox-swagger-ui</artifactId>
+		    <version>${swagger.version}</version>
+		</dependency>
+		
 	</dependencies>
 
 	<build>
@@ -216,10 +297,6 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>maven</groupId>
-				<artifactId>maven-test-plugin</artifactId>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
@@ -263,13 +340,13 @@
 		<repository>  
             <id>user-release</id>  
             <name>User Project Release</name>  
-            <url>http://192.168.0.115:8081/nexus/content/repositories/releases/</url>  
+            <url>http://${repo-host}/nexus/content/repositories/releases/</url>  
         </repository>  
   
         <snapshotRepository>  
             <id>user-snapshots</id>  
             <name>User Project SNAPSHOTS</name>  
-            <url>http://192.168.0.115:8081/nexus/content/repositories/snapshots/</url>  
+            <url>http://${repo-host}/nexus/content/repositories/snapshots/</url>  
         </snapshotRepository>  
 	</distributionManagement>
 </project>
