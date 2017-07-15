@@ -50,11 +50,9 @@ public class HBaseUtils {
 		System.setProperty("HADOOP_MAPRED_HOME", "F:/develop/hadoop/hadoop-2.7.2");
 		configuration = new Configuration();
 		/** 与hbase/conf/hbase-site.xml中hbase.master配置的值相同 */
-//		configuration.set("hbase.master", "192.168.0.115:60000");
-		configuration.set("hbase.master", "192.168.0.15:60000");
+		configuration.set("hbase.master", "host-10:60000");
 		/** 与hbase/conf/hbase-site.xml中hbase.zookeeper.quorum配置的值相同 */
-//		configuration.set("hbase.zookeeper.quorum", "192.168.0.115");
-		configuration.set("hbase.zookeeper.quorum", "192.168.0.15,192.168.0.16,192.168.0.17");
+		configuration.set("hbase.zookeeper.quorum", "host-10,host-11,host-12,host-13,host-14");
 		/** 与hbase/conf/hbase-site.xml中hbase.zookeeper.property.clientPort配置的值相同 */
 		configuration.set("hbase.zookeeper.property.clientPort", "2181");
 		//configuration = HBaseConfiguration.create(configuration);

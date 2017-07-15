@@ -14,7 +14,7 @@
 		<repository>
 			<id>Public</id>
 			<name>Public Repositories</name>
-			<url>http://192.168.0.115:8081/repository/maven-public/</url>
+			<url>http://192.168.0.124:8081/repository/maven-public/</url>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
@@ -34,6 +34,7 @@
 		<storm.version>1.1.0</storm.version>
 		<jstorm.version>2.2.1</jstorm.version>
 		<eshadoop.version>2.4.1</eshadoop.version>
+		<phoenix.version>4.7.0-HBase-1.1</phoenix.version>
 		<elasticsearch.version>5.3.0</elasticsearch.version>
 	</properties>
 
@@ -227,7 +228,7 @@
             <artifactId>hbase-hadoop2-compat</artifactId>
             <version>${hbase.version}</version>
         </dependency>
-		
+        
 		<!-- Kafka依赖包 -->
 		<dependency>
 			<groupId>org.apache.kafka</groupId>
@@ -260,6 +261,19 @@
 		    <artifactId>jstorm-core</artifactId>
 		    <version>${jstorm.version}</version>
 		</dependency>
+		
+		<!-- Phoenix依赖包 -->
+		<dependency>
+		    <groupId>org.apache.phoenix</groupId>
+		    <artifactId>phoenix-core</artifactId>
+		    <version>4.11.0-HBase-1.2</version>
+		</dependency>
+		
+        <dependency>
+		    <groupId>org.apache.phoenix</groupId>
+		    <artifactId>phoenix-server-client</artifactId>
+		    <version>4.7.0-HBase-1.1</version>
+		</dependency> 
 		
 		<!-- ElasticSearch 5.3.0 -->
 		<dependency>
@@ -312,7 +326,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>org.cisiondata.modules.dataprocess.k2he.K2HEJStormTopology</mainClass>
+							<mainClass>org.cisiondata.modules.dataprocess.k2he.Kafka2ElasticHBaseTopology</mainClass>
 							<addClasspath>true</addClasspath>
 					        <classpathPrefix>libs/</classpathPrefix>
 						</manifest>
@@ -346,7 +360,6 @@
 				</executions>
 			</plugin>
 			-->
-			<!--  
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
@@ -365,7 +378,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			-->
 		</plugins>
 	</build>
 	

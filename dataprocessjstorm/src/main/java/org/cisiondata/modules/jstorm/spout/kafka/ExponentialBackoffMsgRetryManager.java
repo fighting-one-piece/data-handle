@@ -8,6 +8,8 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.mortbay.log.Log;
+
 import backtype.storm.utils.Time;
 
 @SuppressWarnings("serial")
@@ -39,8 +41,11 @@ public class ExponentialBackoffMsgRetryManager implements FailedMsgRetryManager 
     public void failed(Long offset) {
         MessageRetryRecord oldRecord = this.records.get(offset);
         MessageRetryRecord newRecord = oldRecord == null ?
-                                       new MessageRetryRecord(offset) :
-                                       oldRecord.createNextRetryRecord();
+        		new MessageRetryRecord(offset) : oldRecord.createNextRetryRecord();
+        if (null == newRecord) {
+        	Log.info("failed offset {}, newRecord is null", offset);
+        	return;
+        }
         this.records.put(offset, newRecord);
         this.waiting.add(newRecord);
     }
