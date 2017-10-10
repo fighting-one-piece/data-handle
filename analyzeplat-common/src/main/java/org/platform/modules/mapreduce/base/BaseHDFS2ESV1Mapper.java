@@ -18,11 +18,9 @@ import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.platform.utils.json.GsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 public class BaseHDFS2ESV1Mapper extends Mapper<LongWritable, Text, Text, Text> {
 	
@@ -33,8 +31,6 @@ public class BaseHDFS2ESV1Mapper extends Mapper<LongWritable, Text, Text, Text> 
 	private String esIndex = null;
 	
 	private String esType = null;
-	
-	private Gson gson = null;
 	
 	private int batchSize = 1000;
 	
@@ -48,7 +44,6 @@ public class BaseHDFS2ESV1Mapper extends Mapper<LongWritable, Text, Text, Text> 
 		this.esIndex = (String) context.getConfiguration().get("esIndex");
 		this.esType = (String) context.getConfiguration().get("esType");
 		this.batchSize = Integer.parseInt(String.valueOf(context.getConfiguration().get("batchSize", "1000")));
-		this.gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
 		this.records = new ArrayList<Map<String, Object>>(this.batchSize);
 		this.mapRecords = new HashMap<String, Text>();
 		String esClusterName = (String) context.getConfiguration().get("esClusterName");
@@ -73,14 +68,14 @@ public class BaseHDFS2ESV1Mapper extends Mapper<LongWritable, Text, Text, Text> 
 		super.run(context);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void map(LongWritable key, Text value, Context context)
 			throws IOException, InterruptedException {
 		try {
-			Map<String, Object> record = gson.fromJson(value.toString(), Map.class);
+			Map<String, Object> record = GsonUtils.fromJsonToMap(value.toString());
+			handle(record);
 			records.add(record);
-			mapRecords.put((String) record.get("_id"), new Text(value.toString()));
+			mapRecords.put((String) record.get("_id"), new Text(GsonUtils.fromMapToJson(record)));
 			if (records.size() > this.batchSize) {
 				List<String> notExistIds = bulkInsertIndexTypeDatas(records);
 				for (int i = 0, len = notExistIds.size(); i < len; i++) {
@@ -92,6 +87,9 @@ public class BaseHDFS2ESV1Mapper extends Mapper<LongWritable, Text, Text, Text> 
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 		}
+	}
+	
+	protected void handle(Map<String, Object> original) {
 	}
 	
 	@Override

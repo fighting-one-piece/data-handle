@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
@@ -22,6 +23,8 @@ import com.google.gson.GsonBuilder;
 public abstract class BaseHDFS2HDFSMapper extends Mapper<LongWritable, Text, NullWritable, Text> {
 	
 	protected Logger LOG = LoggerFactory.getLogger(getClass());
+	
+	private static final String DATE_REG = "^\\d{4}-\\d{1,2}-\\d{1,2} \\d{2}:\\d{2}:\\d{2}$";
 	
 	protected Gson gson = null;
 	
@@ -49,14 +52,24 @@ public abstract class BaseHDFS2HDFSMapper extends Mapper<LongWritable, Text, Nul
 
 	@Override
 	protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-		//防止文本文件抽取Map缺少指定列值抛错
-		Map<String, Object> original = extractInputRecord(value.toString());
-		if (null == original || original.isEmpty()) return;
-		if ("sourceFile".equalsIgnoreCase(String.valueOf(original.get("sourceFile")))) return;
-		if (!original.containsKey("insertTime")) {
-			original.put("insertTime", DateFormatter.TIME.get().format(new Date()));
-		}
 		try {
+			//防止文本文件抽取Map缺少指定列值抛错
+			Map<String, Object> original = extractInputRecord(value.toString());
+			if (null == original || original.isEmpty()) return;
+			if (!original.containsKey("sourceFile") || !original.containsKey("updateTime")) {
+				throw new RuntimeException("can not contains sourceFile or updateTime field!");
+			}
+			String sourceFile = String.valueOf(original.get("sourceFile"));
+			if ("sourceFile".equalsIgnoreCase(sourceFile) || StringUtils.isBlank(sourceFile)) {
+				throw new RuntimeException("sourceFile field error!");
+			}
+			String updateTime = String.valueOf(original.get("updateTime"));
+			if (!updateTime.matches(DATE_REG)) {
+				throw new RuntimeException("updateTime field error!");
+			}
+			if (!original.containsKey("insertTime")) {
+				original.put("insertTime", DateFormatter.TIME.get().format(new Date()));
+			}
 			for (Map.Entry<String, Object> entry : original.entrySet()) {
 				Object realValue = entry.getValue();
 				if (ValidateUtils.isAllHalf(realValue)) {
@@ -79,6 +92,7 @@ public abstract class BaseHDFS2HDFSMapper extends Mapper<LongWritable, Text, Nul
 			}
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
+			multipleOutputs.write(NullWritable.get(), new Text(value.toString()), "error");
 		}
 	}
 	
@@ -94,6 +108,10 @@ public abstract class BaseHDFS2HDFSMapper extends Mapper<LongWritable, Text, Nul
 	@Override
 	protected void cleanup(Context context) throws IOException,InterruptedException {
 		super.cleanup(context);
+		if(null != multipleOutputs) {
+            multipleOutputs.close();
+            multipleOutputs = null;
+        }
 	}
 
 }

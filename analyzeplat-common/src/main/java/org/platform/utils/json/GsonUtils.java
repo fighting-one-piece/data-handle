@@ -20,9 +20,12 @@ public class GsonUtils {
 	
 	static {
 		/** setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE)*/
-		/** .setPrettyPrinting() */
+		/** enableComplexMapKeySerialization*/
+		/** serializeNulls() */
+		/** setPrettyPrinting() */
 		gson = new GsonBuilder()
 				.serializeNulls()
+				.disableHtmlEscaping()
 				.enableComplexMapKeySerialization()
 				.serializeSpecialFloatingPointValues()
 				.setDateFormat("yyyy-MM-dd HH:mm:ss")

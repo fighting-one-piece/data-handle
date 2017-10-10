@@ -9,7 +9,15 @@ import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
 
 /** HDFS数据文件批量导入ES */
-public class BaseHDFS2ESV2Job extends BaseJob {
+public abstract class BaseHDFS2ESV2Job extends BaseJob {
+	
+	/**
+	 * 获取Mapper类
+	 * @return
+	 */
+	public Class<? extends BaseHDFS2ESV2Mapper> getMapperClass() {
+		return BaseHDFS2ESV2Mapper.class;
+	}
 	
 	/**
 	 * 参数1：ES Index
@@ -22,7 +30,6 @@ public class BaseHDFS2ESV2Job extends BaseJob {
 	@Override
 	public int run(String[] args) throws Exception {
 		Configuration conf = newConfiguration();
-		conf.set("mapreduce.framework.name", "yarn");
 		conf.set("esIndex", args[0]);
 		conf.set("esType", args[1]); 
 		conf.set("esClusterName", args[2]); 
@@ -35,7 +42,7 @@ public class BaseHDFS2ESV2Job extends BaseJob {
 		}
 		Job job = Job.getInstance(conf, getJobName());
 		job.setJarByClass(BaseHDFS2ESV2Job.class);
-		job.setMapperClass(BaseHDFS2ESV2Mapper.class);
+		job.setMapperClass(getMapperClass());
 		job.setMapOutputKeyClass(NullWritable.class);
 		job.setMapOutputValueClass(Text.class);
 		

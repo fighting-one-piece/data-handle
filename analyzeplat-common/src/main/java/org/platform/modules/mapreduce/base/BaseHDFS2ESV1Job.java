@@ -15,6 +15,14 @@ import org.apache.hadoop.util.GenericOptionsParser;
 public class BaseHDFS2ESV1Job extends BaseJob {
 	
 	/**
+	 * 获取Mapper类
+	 * @return
+	 */
+	public Class<? extends BaseHDFS2ESV1Mapper> getMapperClass() {
+		return BaseHDFS2ESV1Mapper.class;
+	}
+	
+	/**
 	 * 参数1：ES Index
 	 * 参数2：ES Type
 	 * 参数3：ES 集群名称
@@ -38,7 +46,7 @@ public class BaseHDFS2ESV1Job extends BaseJob {
 		}
 		Job job = Job.getInstance(conf, getJobName());
 		job.setJarByClass(BaseHDFS2ESV1Job.class);
-		job.setMapperClass(BaseHDFS2ESV1Mapper.class);
+		job.setMapperClass(getMapperClass());
 		job.setMapOutputKeyClass(Text.class);
 		job.setMapOutputValueClass(Text.class);
 		

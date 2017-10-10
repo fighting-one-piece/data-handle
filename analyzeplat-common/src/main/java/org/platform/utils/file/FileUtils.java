@@ -22,8 +22,16 @@ public class FileUtils {
 	
 	private static Logger LOG = LoggerFactory.getLogger(FileUtils.class);
 	
+	public static List<String> readFromAbsolute(String src) throws FileNotFoundException {
+		return read(new FileInputStream(new File(src)), new DefaultLineHandler());
+	}
+	
 	public static <T> List<T> readFromAbsolute(String src, LineHandler<T> lineHandler) throws FileNotFoundException {
 		return read(new FileInputStream(new File(src)), lineHandler);
+	}
+	
+	public static List<String> readFromClasspath(String src) {
+		return read(FileUtils.class.getClassLoader().getResourceAsStream(src), new DefaultLineHandler());
 	}
 	
 	public static <T> List<T> readFromClasspath(String src, LineHandler<T> lineHandler) {
@@ -41,7 +49,7 @@ public class FileUtils {
 				if (!lineHandler.filter(t)) result.add(t);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		} finally {
 			try {
 				if (null != in) in.close();
@@ -58,12 +66,18 @@ public class FileUtils {
 	}
 	
 	public static void write(String dest, List<String> lines) {
-		OutputStream out = null;
+		File file = new File(dest);
+		if (!file.getParentFile().exists()) file.mkdirs();
+		try {
+			write(new FileOutputStream(file), lines);
+		} catch (FileNotFoundException e) {
+			LOG.error(e.getMessage(), e);
+		}
+	}
+	
+	public static void write(OutputStream out, List<String> lines) {
 		BufferedWriter bw = null;
 		try {
-			File file = new File(dest);
-			if (!file.getParentFile().exists()) file.mkdirs();
-			out = new FileOutputStream(file);
 			bw = new BufferedWriter(new OutputStreamWriter(out));
 			for (int i = 0, len = lines.size(); i < len; i++) {
 				bw.write(lines.get(i));
@@ -71,7 +85,7 @@ public class FileUtils {
 			}
 			bw.flush();
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		} finally {
 			try {
 				if (null != out) out.close();
@@ -94,7 +108,7 @@ public class FileUtils {
 			}
 			bw.flush();
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		} finally {
 			try {
 				if (null != out) out.close();
@@ -124,7 +138,7 @@ public class FileUtils {
 			}
 			bw.flush();
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		} finally {
 			try {
 				if (null != in) in.close();

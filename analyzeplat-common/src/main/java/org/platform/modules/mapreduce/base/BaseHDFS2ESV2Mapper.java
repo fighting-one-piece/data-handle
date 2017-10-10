@@ -16,11 +16,9 @@ import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.platform.utils.json.GsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 public class BaseHDFS2ESV2Mapper extends Mapper<LongWritable, Text, NullWritable, Text> {
 	
@@ -32,8 +30,6 @@ public class BaseHDFS2ESV2Mapper extends Mapper<LongWritable, Text, NullWritable
 	
 	private String esType = null;
 	
-	private Gson gson = null;
-	
 	private int batchSize = 1000;
 	
 	private List<Map<String, Object>> records = null;
@@ -44,7 +40,6 @@ public class BaseHDFS2ESV2Mapper extends Mapper<LongWritable, Text, NullWritable
 		this.esIndex = (String) context.getConfiguration().get("esIndex");
 		this.esType = (String) context.getConfiguration().get("esType");
 		this.batchSize = Integer.parseInt(String.valueOf(context.getConfiguration().get("batchSize", "1000")));
-		this.gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
 		this.records = new ArrayList<Map<String, Object>>(this.batchSize);
 		String esClusterName = (String) context.getConfiguration().get("esClusterName");
 		String esClusterIP = (String) context.getConfiguration().get("esClusterIP");
@@ -68,12 +63,12 @@ public class BaseHDFS2ESV2Mapper extends Mapper<LongWritable, Text, NullWritable
 		super.run(context);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void map(LongWritable key, Text value, Context context)
 			throws IOException, InterruptedException {
 		try {
-			Map<String, Object> record = gson.fromJson(value.toString(), Map.class);
+			Map<String, Object> record = GsonUtils.fromJsonToMap(value.toString());
+			handle(record);
 			records.add(record);
 			if (records.size() > this.batchSize) {
 				bulkInsertIndexTypeDatas(records);
@@ -82,6 +77,9 @@ public class BaseHDFS2ESV2Mapper extends Mapper<LongWritable, Text, NullWritable
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 		}
+	}
+	
+	protected void handle(Map<String, Object> original) {
 	}
 	
 	@Override

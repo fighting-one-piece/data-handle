@@ -28,6 +28,9 @@ public abstract class BaseHDFS2HDFSV2Mapper extends BaseHDFS2HDFSMapper {
 	public Map<String, Object> extractInputRecord(String inputRecord) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		String[] fields = inputRecord.split(DELIMITER);
+		if (metadatas.length != fields.length) {
+			throw new RuntimeException("fields length not match metadatas length! " + inputRecord);
+		}
 		for (int i = 0, len = metadatas.length; i < len; i++) {
 			result.put(metadatas[i], fields[i]);
 		}

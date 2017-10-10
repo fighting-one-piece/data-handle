@@ -13,7 +13,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;  
+import com.google.gson.JsonParseException;
 
 public class MapDeserializer implements JsonDeserializer<Map<String, Object>> {
 
@@ -34,11 +34,14 @@ public class MapDeserializer implements JsonDeserializer<Map<String, Object>> {
 			} else if (JsonObject.class.isAssignableFrom(elementClass)) {
 				map.put(entry.getKey(), GsonUtils.builder().toJson(element));
 			} else {
-				map.put(entry.getKey(), isNumberic(element.getAsString()) ? element.getAsLong() : element);
+				map.put(entry.getKey(), isNumberic(element.getAsString()) ? element.getAsLong() : element.getAsString());
 			}
 		}
 		return map;
 	}
+	
+	private static final String REG_1 = "0[0-9]{9,11}";
+	private static final String REG_2 = "\\d{1,18}|[0-8][0-9]{18}|9[0-1]\\d{17}";
 
 	/**
 	 * 判断是不是数字
@@ -46,8 +49,8 @@ public class MapDeserializer implements JsonDeserializer<Map<String, Object>> {
 	 * @return 是数字类型返回true
 	 */
 	public boolean isNumberic(String input) {
-		Pattern pattern = Pattern.compile("\\d{1,18}|[0-8][0-9]{18}|9[0-1]\\d{17}");
-		return !pattern.matcher(input).matches() ? false : true;
+		return Pattern.compile(REG_1).matcher(input).matches() ? false : 
+			Pattern.compile(REG_2).matcher(input).matches() ? true : false;
 	}
 
 }
