@@ -1,0 +1,10 @@
+{
+    "name": "esreader",
+    "class": "com.alibaba.datax.plugin.reader.esreader.ESReader",
+    "description": {
+        "useScene": "only for developer test.",
+        "mechanism": "use datax framework to transport elastic search data to channel.",
+        "warn": "Never use it in your real job."
+    },
+    "developer": "wulin"
+}
