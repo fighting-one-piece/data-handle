@@ -1,0 +1,130 @@
+package com.alibaba.datax.common.utils.file;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class FileUtils {
+	
+	private static Logger LOG = LoggerFactory.getLogger(FileUtils.class);
+	
+	public static List<String> readFromAbsolute(String src) throws FileNotFoundException {
+		return read(new FileInputStream(new File(src)), new DefaultLineHandler());
+	}
+	
+	public static <T> List<T> readFromAbsolute(String src, LineHandler<T> lineHandler) throws FileNotFoundException {
+		return read(new FileInputStream(new File(src)), lineHandler);
+	}
+	
+	public static List<String> readFromClasspath(String src) {
+		return read(FileUtils.class.getClassLoader().getResourceAsStream(src), new DefaultLineHandler());
+	}
+	
+	public static <T> List<T> readFromClasspath(String src, LineHandler<T> lineHandler) {
+		return read(FileUtils.class.getClassLoader().getResourceAsStream(src), lineHandler);
+	}
+	
+	public static <T> List<T> read(InputStream in, LineHandler<T> lineHandler) {
+		List<T> result = new ArrayList<T>();
+		BufferedReader br = null;
+		try {
+			br = new BufferedReader(new InputStreamReader(in));
+			String line = null;
+			while ((line = br.readLine()) != null) {
+				T t = lineHandler.handle(line);
+				if (!lineHandler.filter(t)) result.add(t);
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+		} finally {
+			try {
+				if (null != in) in.close();
+				if (null != br) br.close();
+			} catch (Exception e) {
+				LOG.error(e.getMessage(), e);
+			}
+		}
+		return result;
+	}
+	
+	public static void write(String dest, String... lines) {
+		write(dest, Arrays.asList(lines));
+	}
+	
+	public static void write(String dest, List<String> lines) {
+		File file = new File(dest);
+		if (!file.getParentFile().exists()) file.mkdirs();
+		try {
+			write(new FileOutputStream(file), lines);
+		} catch (FileNotFoundException e) {
+			LOG.error(e.getMessage(), e);
+		}
+	}
+	
+	public static void write(OutputStream out, List<String> lines) {
+		BufferedWriter bw = null;
+		try {
+			bw = new BufferedWriter(new OutputStreamWriter(out));
+			for (int i = 0, len = lines.size(); i < len; i++) {
+				bw.write(lines.get(i));
+				bw.newLine();
+			}
+			bw.flush();
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+		} finally {
+			try {
+				if (null != out) out.close();
+				if (null != bw) bw.close();
+			} catch (Exception e) {
+				LOG.error(e.getMessage(), e);
+			}
+		}
+	}
+	
+	public static <T> void readAndWrite(String src, String dest, LineHandler<T> lineHandler) {
+		InputStream in = null;
+		BufferedReader br = null;
+		OutputStream out = null;
+		BufferedWriter bw = null;
+		try {
+			in = new FileInputStream(new File(src));
+			br = new BufferedReader(new InputStreamReader(in));
+			out = new FileOutputStream(new File(dest));
+			bw = new BufferedWriter(new OutputStreamWriter(out));
+			String line = null;
+			while ((line = br.readLine()) != null) {
+				if (!lineHandler.filter(lineHandler.handle(line))) {
+					bw.write(line);
+					bw.newLine();
+				}
+			}
+			bw.flush();
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+		} finally {
+			try {
+				if (null != in) in.close();
+				if (null != br) br.close();
+				if (null != out) out.close();
+				if (null != bw) bw.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+}
