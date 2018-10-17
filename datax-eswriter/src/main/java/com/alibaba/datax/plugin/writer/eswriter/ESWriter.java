@@ -24,7 +24,6 @@ import com.alibaba.datax.common.plugin.RecordReceiver;
 import com.alibaba.datax.common.spi.Writer;
 import com.alibaba.datax.common.util.Configuration;
 import com.google.gson.Gson;
-import com.umeng.es.config.EsServerAddress;
 
 public class ESWriter extends Writer {
 
