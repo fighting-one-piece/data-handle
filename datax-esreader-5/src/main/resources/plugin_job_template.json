@@ -1,0 +1,12 @@
+{
+    "name": "esreader",
+    "parameter": {
+        "esClusterName": "",
+        "esClusterIP": "",
+        "esClusterPort": "",
+        "esIndex": "",
+        "esType": "",
+        "batchSize": ""
+        "readSize": ""
+    }
+}

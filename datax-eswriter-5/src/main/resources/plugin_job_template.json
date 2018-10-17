@@ -1,0 +1,14 @@
+{
+    "name": "eswriter",
+    "parameter": {
+        "esClusterName": "",
+        "esClusterIP": "",
+        "esClusterPort": "",
+        "esIndex": "",
+        "esType": "",
+        "attributeNameString": "",
+        "attributeNameSplit": "",
+        "className": "",
+        "batchSize": ""
+    }
+}
