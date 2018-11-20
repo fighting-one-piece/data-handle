@@ -69,18 +69,19 @@ public class ESWriter extends Writer {
 
 		@Override
 		public List<Configuration> split(int mandatoryNumber) {
-			List<Configuration> writerSplitConfiguration = new ArrayList<Configuration>();
+			List<Configuration> writerSplitConfigurations = new ArrayList<Configuration>();
 			for (int i = 0; i < mandatoryNumber; i++) {
-				writerSplitConfiguration.add(this.originalConfiguration);
+				Configuration writerSplitConfiguration = this.originalConfiguration.clone();
+				writerSplitConfigurations.add(writerSplitConfiguration);
 			}
-			return writerSplitConfiguration;
+			return writerSplitConfigurations;
 		}
 		
 	}
 	
 	public static class Task extends Writer.Task {
 		
-		private Configuration writerSliceConfiguration = null;
+		private Configuration writerSplitConfiguration = null;
 		
 		private String esClusterName = null;
 		
@@ -120,17 +121,17 @@ public class ESWriter extends Writer {
 		
 		@Override
 		public void init() {
-			this.writerSliceConfiguration = super.getPluginJobConf();
-			this.esClusterName = writerSliceConfiguration.getString(Key.esClusterName);
-			this.esClusterIP = writerSliceConfiguration.getString(Key.esClusterIP);
-			this.esClusterPort = writerSliceConfiguration.getInt(Key.esClusterPort, 9300);
-			this.esIndex = writerSliceConfiguration.getString(Key.esIndex);
-			this.esType = writerSliceConfiguration.getString(Key.esType);
-			this.attributeNameString = writerSliceConfiguration.getString(Key.attributeNameString);
-			this.attributeNameSplit = writerSliceConfiguration.getString(Key.attributeNameSplit, ",");
+			this.writerSplitConfiguration = super.getPluginJobConf();
+			this.esClusterName = writerSplitConfiguration.getString(Key.esClusterName);
+			this.esClusterIP = writerSplitConfiguration.getString(Key.esClusterIP);
+			this.esClusterPort = writerSplitConfiguration.getInt(Key.esClusterPort, 9300);
+			this.esIndex = writerSplitConfiguration.getString(Key.esIndex);
+			this.esType = writerSplitConfiguration.getString(Key.esType);
+			this.attributeNameString = writerSplitConfiguration.getString(Key.attributeNameString);
+			this.attributeNameSplit = writerSplitConfiguration.getString(Key.attributeNameSplit, ",");
 			attributeNames = attributeNameString.split(attributeNameSplit);
-			this.className = writerSliceConfiguration.getString(Key.className);
-			this.batchSize = writerSliceConfiguration.getInt(Key.batchSize, 1000);
+			this.className = writerSplitConfiguration.getString(Key.className);
+			this.batchSize = writerSplitConfiguration.getInt(Key.batchSize, 1000);
 			this.gson = new Gson();
 		}
 		

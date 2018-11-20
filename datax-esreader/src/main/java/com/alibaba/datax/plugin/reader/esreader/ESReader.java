@@ -64,18 +64,19 @@ public class ESReader extends Reader {
 
 		@Override
 		public List<Configuration> split(int adviceNumber) {
-			List<Configuration> readerSplitConfiguration = new ArrayList<Configuration>();
+			List<Configuration> readerSplitConfigurations = new ArrayList<Configuration>();
 			for (int i = 0; i < adviceNumber; i++) {
-				readerSplitConfiguration.add(this.originalConfiguration);
+				Configuration readerSplitConfiguration = this.originalConfiguration.clone();
+				readerSplitConfigurations.add(readerSplitConfiguration);
 			}
-			return readerSplitConfiguration;
+			return readerSplitConfigurations;
 		}
 		
 	}
 	
 	public static class Task extends Reader.Task {
 		
-		private Configuration readerSliceConfiguration = null;
+		private Configuration readerSplitConfiguration = null;
 		
 		private String esClusterName = null;
 		
@@ -111,15 +112,15 @@ public class ESReader extends Reader {
 		
 		@Override
 		public void init() {
-			this.readerSliceConfiguration = super.getPluginJobConf();
-			this.esClusterName = readerSliceConfiguration.getString(Key.esClusterName);
-			this.esClusterIP = readerSliceConfiguration.getString(Key.esClusterIP);
-			this.esClusterPort = readerSliceConfiguration.getInt(Key.esClusterPort, 9300);
-			this.esIndex = readerSliceConfiguration.getString(Key.esIndex);
-			this.esType = readerSliceConfiguration.getString(Key.esType);
-			this.esFieldInclude = readerSliceConfiguration.getString(Key.esFieldInclude);
-			this.batchSize = readerSliceConfiguration.getInt(Key.batchSize, 1000);
-			this.readSize = readerSliceConfiguration.getLong(Key.readSize, Long.MAX_VALUE);
+			this.readerSplitConfiguration = super.getPluginJobConf();
+			this.esClusterName = readerSplitConfiguration.getString(Key.esClusterName);
+			this.esClusterIP = readerSplitConfiguration.getString(Key.esClusterIP);
+			this.esClusterPort = readerSplitConfiguration.getInt(Key.esClusterPort, 9300);
+			this.esIndex = readerSplitConfiguration.getString(Key.esIndex);
+			this.esType = readerSplitConfiguration.getString(Key.esType);
+			this.esFieldInclude = readerSplitConfiguration.getString(Key.esFieldInclude);
+			this.batchSize = readerSplitConfiguration.getInt(Key.batchSize, 1000);
+			this.readSize = readerSplitConfiguration.getLong(Key.readSize, Long.MAX_VALUE);
 			this.gson = new Gson();
 		}
 		
@@ -127,7 +128,7 @@ public class ESReader extends Reader {
 		public void prepare() {
 			super.prepare();
 			Settings settings = Settings.builder().put("cluster.name", esClusterName)
-					.put("client.tansport.sniff", true).build();
+					.put("client.transport.sniff", true).build();
 			client = TransportClient.builder().settings(settings).build();
 			List<EsServerAddress> serverAddress = new ArrayList<EsServerAddress>();
 			String[] esClusterIPs = esClusterIP.contains(",") ? 

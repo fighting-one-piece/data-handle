@@ -6,7 +6,7 @@
         "esClusterPort": "",
         "esIndex": "",
         "esType": "",
-        "batchSize": ""
+        "batchSize": "",
         "readSize": ""
     }
 }

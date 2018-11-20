@@ -68,11 +68,12 @@ public class ESWriter extends Writer {
 
 		@Override
 		public List<Configuration> split(int mandatoryNumber) {
-			List<Configuration> writerSplitConfiguration = new ArrayList<Configuration>();
+			List<Configuration> writerSplitConfigurations = new ArrayList<Configuration>();
 			for (int i = 0; i < mandatoryNumber; i++) {
-				writerSplitConfiguration.add(this.originalConfiguration);
+				Configuration writerSplitConfiguration = this.originalConfiguration.clone();
+				writerSplitConfigurations.add(writerSplitConfiguration);
 			}
-			return writerSplitConfiguration;
+			return writerSplitConfigurations;
 		}
 		
 	}

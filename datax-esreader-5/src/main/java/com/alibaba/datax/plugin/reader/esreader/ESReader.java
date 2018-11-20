@@ -14,7 +14,10 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.slice.SliceBuilder;
 import org.elasticsearch.xpack.client.PreBuiltXPackTransportClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.alibaba.datax.common.element.Record;
 import com.alibaba.datax.common.element.StringColumn;
@@ -24,13 +27,17 @@ import com.alibaba.datax.common.util.Configuration;
 import com.google.gson.Gson;
 
 public class ESReader extends Reader {
+	
+	private static Logger LOG = LoggerFactory.getLogger(ESReader.class);
 
 	public static class Job extends Reader.Job {
+		
 		
 		private Configuration originalConfiguration = null;
 		
 		@Override
 		public void preCheck() {
+			System.setProperty("es.set.netty.runtime.available.processors", "false");
 			super.preCheck();
 		}
 
@@ -41,6 +48,7 @@ public class ESReader extends Reader {
 		
 		@Override
 		public void init() {
+			System.setProperty("es.set.netty.runtime.available.processors", "false");
 			this.originalConfiguration = super.getPluginJobConf();
 		}
 		
@@ -65,18 +73,22 @@ public class ESReader extends Reader {
 
 		@Override
 		public List<Configuration> split(int adviceNumber) {
-			List<Configuration> readerSplitConfiguration = new ArrayList<Configuration>();
+			List<Configuration> readerSplitConfigurations = new ArrayList<Configuration>();
 			for (int i = 0; i < adviceNumber; i++) {
-				readerSplitConfiguration.add(this.originalConfiguration);
+				LOG.info("job slice id {} max {}", i, adviceNumber);
+				Configuration readerSplitConfiguration = this.originalConfiguration.clone();
+				readerSplitConfiguration.set(Key.sliceId, i);
+				readerSplitConfiguration.set(Key.sliceMax, adviceNumber);
+				readerSplitConfigurations.add(readerSplitConfiguration);
 			}
-			return readerSplitConfiguration;
+			return readerSplitConfigurations;
 		}
 		
 	}
 	
 	public static class Task extends Reader.Task {
 		
-		private Configuration readerSliceConfiguration = null;
+		private Configuration readerSplitConfiguration = null;
 		
 		private String esClusterName = null;
 		
@@ -100,6 +112,10 @@ public class ESReader extends Reader {
 		
 		private Long readSize = null;
 		
+		private Integer sliceId = null;
+		
+		private Integer sliceMax = null;
+		
 		@Override
 		public void preCheck() {
 			super.preCheck();
@@ -112,23 +128,26 @@ public class ESReader extends Reader {
 		
 		@Override
 		public void init() {
-			this.readerSliceConfiguration = super.getPluginJobConf();
-			this.esClusterName = readerSliceConfiguration.getString(Key.esClusterName);
-			this.esClusterIP = readerSliceConfiguration.getString(Key.esClusterIP);
-			this.esClusterPort = readerSliceConfiguration.getInt(Key.esClusterPort, 9300);
-			this.esIndex = readerSliceConfiguration.getString(Key.esIndex);
-			this.esType = readerSliceConfiguration.getString(Key.esType);
-			this.esFieldInclude = readerSliceConfiguration.getString(Key.esFieldInclude);
-			this.batchSize = readerSliceConfiguration.getInt(Key.batchSize, 1000);
-			this.readSize = readerSliceConfiguration.getLong(Key.readSize, Long.MAX_VALUE);
+			this.readerSplitConfiguration = super.getPluginJobConf();
+			this.esClusterName = readerSplitConfiguration.getString(Key.esClusterName);
+			this.esClusterIP = readerSplitConfiguration.getString(Key.esClusterIP);
+			this.esClusterPort = readerSplitConfiguration.getInt(Key.esClusterPort, 9300);
+			this.esIndex = readerSplitConfiguration.getString(Key.esIndex);
+			this.esType = readerSplitConfiguration.getString(Key.esType);
+			this.esFieldInclude = readerSplitConfiguration.getString(Key.esFieldInclude);
+			this.batchSize = readerSplitConfiguration.getInt(Key.batchSize, 1000);
+			this.readSize = readerSplitConfiguration.getLong(Key.readSize, Long.MAX_VALUE);
+			this.sliceId = readerSplitConfiguration.getInt(Key.sliceId, 0);
+			this.sliceMax = readerSplitConfiguration.getInt(Key.sliceMax, 1);
 			this.gson = new Gson();
+			LOG.info("task slice id {} max {}", this.sliceId, this.sliceMax);
 		}
 		
 		@Override
 		public void prepare() {
 			super.prepare();
 			Settings settings = Settings.builder().put("cluster.name", esClusterName)
-					.put("client.tansport.sniff", true).build();
+					.put("client.transport.sniff", true).build();
 			client = new PreBuiltXPackTransportClient(settings);
 			List<EsServerAddress> serverAddress = new ArrayList<EsServerAddress>();
 			String[] esClusterIPs = esClusterIP.contains(",") ? 
@@ -164,8 +183,10 @@ public class ESReader extends Reader {
 		@Override
 		public void startRead(RecordSender recordSender) {
 			SearchResponse response = client.prepareSearch(esIndex).setTypes(esType)
-					.setQuery(QueryBuilders.matchAllQuery()).setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
-						.setScroll(new TimeValue(60000)).setSize(batchSize).setExplain(true).execute().actionGet();
+					.setQuery(QueryBuilders.matchAllQuery()).setSearchType(SearchType.QUERY_THEN_FETCH)
+						.setScroll(new TimeValue(60000)).setSize(batchSize)
+							.slice(new SliceBuilder(this.sliceId, this.sliceMax))
+								.setExplain(false).execute().actionGet();
 			Record record = null;
 			Map<String, Object> source = null;
 			Map<String, Object> targetSource = null;

@@ -50,5 +50,17 @@ public final class Key {
 	 */
 	public final static String readSize = "readSize";
 	
+	/**
+	 * @name: sliceId
+	 * @description: slice id
+	 */
+	public final static String sliceId = "sliceId";
+	
+	/**
+	 * @name: sliceMax
+	 * @description: slice max
+	 */
+	public final static String sliceMax = "sliceMax";
+	
 }
 
